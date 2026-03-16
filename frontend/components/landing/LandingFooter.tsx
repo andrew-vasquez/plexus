@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { PlexusLogo } from "@/components/shared/PlexusLogo";
 import { menuItems } from "@/components/landing/constants";
-import { scrollToHash } from "@/components/landing/utils";
 
 export function LandingFooter() {
   return (
@@ -25,7 +24,6 @@ export function LandingFooter() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  onClick={(event) => scrollToHash(event, item.href)}
                   className="block transition-colors duration-200 hover:text-white"
                 >
                   {item.name}

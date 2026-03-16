@@ -25,22 +25,27 @@ export function HeroHeader() {
 
   return (
     <header>
-      <nav data-state={menuState ? "active" : "closed"} className="fixed z-40 w-full px-2">
+      <nav
+        data-state={menuState ? "active" : "closed"}
+        className="fixed z-40 w-full px-2 pt-3 sm:pt-4 lg:pt-0"
+      >
         <div
           className={cn(
-            "mx-auto mt-2 max-w-7xl px-4 transition-all duration-300 lg:px-10",
+            "mx-auto max-w-7xl px-4 pt-2 transition-all duration-300 lg:px-10 lg:pt-0",
             (isScrolled || menuState) &&
               "max-w-5xl overflow-hidden rounded-[18px] border border-white/10 bg-black/55 shadow-[0_22px_60px_-38px_rgba(0,0,0,0.88)] backdrop-blur-xl supports-[backdrop-filter]:bg-black/44",
           )}
         >
-          <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
-            <div className="flex w-full justify-between lg:w-auto">
-              <PlexusLogo />
+          <div className="relative flex min-h-[64px] flex-wrap items-center justify-between gap-4 py-0 lg:min-h-0 lg:gap-0 lg:py-4">
+            <div className="flex w-full items-center justify-between lg:w-auto">
+              <div className="translate-y-1 lg:translate-y-0">
+                <PlexusLogo />
+              </div>
 
               <button
                 onClick={() => setMenuState((value) => !value)}
                 aria-label={menuState ? "Close Menu" : "Open Menu"}
-                className="relative z-20 -m-2.5 -mr-3 block p-2.5 lg:hidden"
+                className="relative z-20 flex h-11 w-11 shrink-0 translate-y-1 items-center justify-center lg:translate-y-0 lg:hidden"
                 type="button"
               >
                 <Menu
