@@ -11,8 +11,16 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { demoSession, featureCards, heroStats, workflowSteps } from "@/lib/demo-data";
+import type { MouseEvent } from "react";
+import {
+  audienceCards,
+  demoSession,
+  featureCards,
+  heroStats,
+  workflowSteps,
+} from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 import { AnimatedGroup } from "@/components/ui/animated-group";
 import { Button } from "@/components/ui/button";
@@ -45,6 +53,24 @@ const menuItems = [
   { name: "Exports", href: "#exports" },
   { name: "Audience", href: "#audience" },
 ];
+
+function scrollToHash(
+  event: MouseEvent<HTMLAnchorElement>,
+  href: string,
+  onComplete?: () => void,
+) {
+  const targetId = href.replace("#", "");
+  const target = document.getElementById(targetId);
+
+  if (!target) {
+    return;
+  }
+
+  event.preventDefault();
+  target.scrollIntoView({ behavior: "smooth", block: "start" });
+  window.history.replaceState(null, "", href);
+  onComplete?.();
+}
 
 export function HeroSection() {
   return (
@@ -354,6 +380,33 @@ function LandingSections() {
                 </div>
               ))}
             </div>
+
+            <div className="mt-4 grid gap-4 border-t border-white/8 pt-4 md:grid-cols-[1.1fr_0.9fr]">
+              <div className="rounded-[16px] border border-white/8 bg-black/30 p-4">
+                <p className="text-[11px] uppercase tracking-[0.18em] text-white/42">
+                  Session note
+                </p>
+                <p className="mt-3 max-w-xl text-sm leading-7 text-white/56">
+                  {demoSession.notes}
+                </p>
+              </div>
+              <div className="rounded-[16px] border border-white/8 bg-black/30 p-4">
+                <p className="text-[11px] uppercase tracking-[0.18em] text-white/42">
+                  Structure pass
+                </p>
+                <div className="mt-4 space-y-3">
+                  {demoSession.sections.map((section) => (
+                    <div
+                      key={section.name}
+                      className="flex items-center justify-between gap-3 text-sm text-white/74"
+                    >
+                      <span>{section.name}</span>
+                      <span className="text-xs text-white/40">{section.measures}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="grid gap-5">
@@ -406,6 +459,106 @@ function LandingSections() {
           </div>
         </AnimatedGroup>
       </section>
+
+      <section
+        id="audience"
+        className="mx-auto max-w-7xl px-6 py-20 lg:px-10 lg:py-28"
+      >
+        <AnimatedGroup className="rounded-[26px] border border-white/8 bg-white/[0.025] p-6 lg:p-8">
+          <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.22em] text-white/44">
+                Audience
+              </p>
+              <h2 className="mt-4 max-w-xl text-4xl tracking-[-0.06em] text-white md:text-5xl">
+                Built for players who want less friction between hearing and playing.
+              </h2>
+            </div>
+            <p className="max-w-2xl text-base leading-8 text-white/52">
+              Plexus should feel credible to experienced guitarists, clear to teachers,
+              and inviting to newer players. The interface stays technical without
+              becoming cold, and the workflow stays fast without looking disposable.
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            {audienceCards.map((audience) => (
+              <article
+                key={audience.title}
+                className="group rounded-[18px] border border-white/8 bg-black/35 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-white/16 hover:bg-black/50"
+              >
+                <p className="text-lg tracking-[-0.03em] text-white">{audience.title}</p>
+                <p className="mt-3 text-sm leading-7 text-white/50">
+                  {audience.description}
+                </p>
+              </article>
+            ))}
+          </div>
+        </AnimatedGroup>
+      </section>
+
+      <footer className="border-t border-white/6">
+        <div className="mx-auto flex max-w-7xl flex-col gap-10 px-6 py-10 lg:flex-row lg:items-end lg:justify-between lg:px-10">
+          <div className="max-w-md">
+            <PlexusLogo />
+            <p className="mt-5 text-sm leading-7 text-white/46">
+              Plexus is an AI powered transcription studio for turning
+              guitar audio into clean review-ready tabs and export paths.
+            </p>
+          </div>
+
+          <div className="grid gap-8 sm:grid-cols-3">
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.22em] text-white/42">
+                Navigate
+              </p>
+              <div className="mt-4 space-y-3 text-sm text-white/62">
+                {menuItems.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    onClick={(event) => scrollToHash(event, item.href)}
+                    className="block transition-colors duration-200 hover:text-white"
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.22em] text-white/42">
+                Product
+              </p>
+              <div className="mt-4 space-y-3 text-sm text-white/62">
+                <Link
+                  href="/studio"
+                  className="block transition-colors duration-200 hover:text-white"
+                >
+                  Open Studio
+                </Link>
+                <Link
+                  href="/studio/demo"
+                  className="block transition-colors duration-200 hover:text-white"
+                >
+                  Demo Workspace
+                </Link>
+              </div>
+            </div>
+
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.22em] text-white/42">
+                Output
+              </p>
+              <div className="mt-4 space-y-3 text-sm text-white/62">
+                <p>Guitar Pro draft</p>
+                <p>Practice PDF</p>
+                <p>MIDI sketch</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
     </>
   );
 }
@@ -429,8 +582,8 @@ function HeroHeader() {
         <div
           className={cn(
             "mx-auto mt-2 max-w-7xl px-4 transition-all duration-300 lg:px-10",
-            isScrolled &&
-              "max-w-5xl rounded-[18px] border border-white/10 bg-black/55 backdrop-blur-xl",
+            (isScrolled || menuState) &&
+              "max-w-5xl overflow-hidden rounded-[18px] border border-white/10 bg-black/55 shadow-[0_22px_60px_-38px_rgba(0,0,0,0.88)] backdrop-blur-xl supports-[backdrop-filter]:bg-black/44",
           )}
         >
           <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
@@ -462,7 +615,11 @@ function HeroHeader() {
               <ul className="flex gap-8 text-sm text-white/54">
                 {menuItems.map((item) => (
                   <li key={item.name}>
-                    <Link href={item.href} className="transition-colors duration-200 hover:text-white">
+                    <Link
+                      href={item.href}
+                      onClick={(event) => scrollToHash(event, item.href)}
+                      className="transition-colors duration-200 hover:text-white"
+                    >
                       {item.name}
                     </Link>
                   </li>
@@ -479,30 +636,61 @@ function HeroHeader() {
               </Button>
             </div>
 
-            <div
-              className={cn(
-                "w-full rounded-[18px] border border-white/10 bg-black/80 p-6 shadow-2xl shadow-black/40 lg:hidden",
-                menuState ? "block" : "hidden",
-              )}
-            >
-              <ul className="space-y-5 text-base text-white/72">
-                {menuItems.map((item) => (
-                  <li key={item.name}>
-                    <Link href={item.href} onClick={() => setMenuState(false)}>
-                      {item.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-6 flex flex-col gap-3">
-                <Button asChild variant="outline">
-                  <Link href="/studio/demo">Preview the workspace</Link>
-                </Button>
-                <Button asChild>
-                  <Link href="/studio">Open Studio</Link>
-                </Button>
-              </div>
-            </div>
+            <AnimatePresence initial={false}>
+              {menuState ? (
+                <>
+                  <motion.div
+                    key="mobile-menu-dismiss"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.16, ease: "easeOut" }}
+                    aria-hidden="true"
+                    className="fixed inset-0 z-30 bg-transparent lg:hidden"
+                    onClick={() => setMenuState(false)}
+                  />
+                  <motion.div
+                    key="mobile-menu"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+                    className="order-last w-full overflow-hidden lg:hidden"
+                  >
+                    <div className="max-h-[calc(100vh-5.25rem)] overflow-y-auto overscroll-contain border-t border-white/8 px-1 pb-4 pt-6">
+                      <ul className="space-y-6 text-base text-white/72">
+                        {menuItems.map((item) => (
+                          <li key={item.name}>
+                            <Link
+                              href={item.href}
+                              onClick={(event) =>
+                                scrollToHash(event, item.href, () => setMenuState(false))
+                              }
+                              className="transition-colors duration-200 hover:text-white"
+                            >
+                              {item.name}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+
+                      <div className="mt-6 flex flex-col gap-3 border-t border-white/8 pt-6">
+                        <Button asChild variant="outline">
+                          <Link href="/studio/demo" onClick={() => setMenuState(false)}>
+                            Preview the workspace
+                          </Link>
+                        </Button>
+                        <Button asChild>
+                          <Link href="/studio" onClick={() => setMenuState(false)}>
+                            Open Studio
+                          </Link>
+                        </Button>
+                      </div>
+                    </div>
+                  </motion.div>
+                </>
+              ) : null}
+            </AnimatePresence>
           </div>
         </div>
       </nav>

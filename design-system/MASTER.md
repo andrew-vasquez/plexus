@@ -48,6 +48,8 @@
 - Use soft but not glowy shadows.
 - Surfaces should feel machined and precise.
 - Panels should look like product UI, not marketing cards pasted onto a page.
+- Blur, when used, should be localized to dark surfaces like a scrolled navbar or mobile menu sheet.
+- Prefer restrained `backdrop-blur-lg` or `backdrop-blur-xl` on black translucent surfaces instead of broad glassmorphism.
 
 ## Typography
 - Headings should feel sharp, high-contrast, and intentional.
@@ -62,6 +64,9 @@
 - Fewer sections with stronger hierarchy beats.
 - Product preview should appear early and feel real.
 - Marketing should orbit the product, not replace it.
+- On mobile and small tablet widths, stack actions and helper copy vertically before they begin competing for width.
+- Avoid “in-between” responsive states where a wide primary button and explanatory text sit side-by-side in a cramped row.
+- Metadata chips should resolve into clean grids or single-column stacks on narrow screens, not ragged wraps.
 
 ## Buttons
 - Primary buttons should feel crisp and premium.
@@ -70,6 +75,8 @@
   - slight lift
   - subtle border brightening
   - mild background shift
+  - favor calmer `400ms` to `520ms` easing over snappy `200ms` motion
+  - keep hover travel small, around `2px` to `3px`, so motion feels smooth instead of springy or stiff
 - Never use cartoonish scale or bounce on hover.
 
 ## Motion
@@ -88,7 +95,12 @@
 - Hover motion:
   - subtle lift
   - border/value emphasis
+  - use a smooth, slightly slower easing curve so interactions feel deliberate, not twitchy
+  - prefer gentle glide over sharp lift; the landing page is the reference for interaction softness
   - no exaggerated tilt, bounce, or floating
+- Mobile menu sheets should blur the content directly behind the sheet while keeping menu text and actions fully crisp.
+- If a dismiss layer is needed, keep it lightly tinted and do not rely on full-viewport blur when the intent is localized surface separation.
+- Mobile menus may allow background scrolling, but the blur treatment must continue covering the full visible viewport while the sheet is open.
 
 ## Performance Rules
 - Prioritize CSS transforms and opacity.
@@ -116,6 +128,8 @@
 - Labels should feel operational and system-like.
 - Status states should be explicit and calm.
 - File upload, analysis, and export flows should look intentional even when mocked.
+- Upload and control panels should prioritize one primary action per vertical block.
+- Supporting helper text should sit beneath the action on narrow layouts unless there is clearly enough width for a balanced row.
 
 ## Copy Style
 - Short, direct, product-focused.
@@ -151,6 +165,7 @@
 - Reuse the shared button system before inventing new button styles.
 - Reuse utility and motion primitives before creating one-off animation patterns.
 - New pages should inherit the same surface, border, and spacing language.
+- Shared logo motion should be present but restrained: slight lift, mild icon/text drift, slower easing, and no flashy brand animation.
 - If a new section feels “cool” but not “credible,” reject it.
 
 ## Future Prompt Snippet

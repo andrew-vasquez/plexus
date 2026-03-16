@@ -10,8 +10,18 @@ import {
   TimerReset,
 } from "lucide-react";
 import { PlexusLogo } from "@/components/shared/PlexusLogo";
+import { AnimatedGroup } from "@/components/ui/animated-group";
 import { Button } from "@/components/ui/button";
 import { demoSession } from "@/lib/demo-data";
+
+const panelClass =
+  "motion-surface rounded-[18px] border border-white/8 bg-white/[0.03] p-5 hover:border-white/14 hover:bg-white/[0.04]";
+
+const railClass =
+  "motion-surface rounded-[18px] border border-white/8 bg-black/30 p-5 hover:border-white/14 hover:bg-black/35";
+
+const insetCardClass =
+  "motion-surface-soft rounded-[12px] border border-white/7 bg-black/25 px-4 py-4 hover:border-white/12 hover:bg-black/35";
 
 export function DemoWorkspace() {
   return (
@@ -20,7 +30,10 @@ export function DemoWorkspace() {
       <div className="noise-layer" aria-hidden="true" />
 
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+        <AnimatedGroup
+          animateOnMount
+          className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between"
+        >
           <PlexusLogo />
           <div className="flex flex-wrap items-center gap-3">
             <Button asChild variant="ghost">
@@ -30,9 +43,9 @@ export function DemoWorkspace() {
               </Link>
             </Button>
           </div>
-        </div>
+        </AnimatedGroup>
 
-        <section className="surface-panel p-6 lg:p-8">
+        <AnimatedGroup animateOnMount className="surface-panel p-6 lg:p-8">
           <div className="flex flex-col gap-5 border-b border-white/10 pb-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="type-label text-[var(--color-accent)]">Demo workspace</p>
@@ -52,7 +65,7 @@ export function DemoWorkspace() {
               ].map((stat) => (
                 <div
                   key={stat.label}
-                  className="rounded-[14px] border border-white/7 bg-white/[0.03] px-4 py-4"
+                  className="motion-surface-soft rounded-[14px] border border-white/7 bg-white/[0.03] px-4 py-4 hover:border-white/14 hover:bg-white/[0.04]"
                 >
                   <p className="type-label text-[var(--color-accent)]">{stat.label}</p>
                   <p className="mt-2 text-sm text-white">{stat.value}</p>
@@ -62,7 +75,7 @@ export function DemoWorkspace() {
           </div>
 
           <div className="mt-8 grid gap-6 xl:grid-cols-[220px_minmax(0,1fr)_320px]">
-            <aside className="rounded-[18px] border border-white/8 bg-black/30 p-5">
+            <aside className={railClass}>
               <p className="type-label text-[var(--color-accent)]">Sections</p>
               <div className="mt-5 space-y-3">
                 {demoSession.sections.map((section, index) => (
@@ -72,7 +85,7 @@ export function DemoWorkspace() {
                       index === 1
                         ? "border-white/18 bg-white/[0.07]"
                         : "border-white/7 bg-white/[0.03]"
-                    }`}
+                    } motion-surface-soft hover:border-white/14`}
                   >
                     <div className="flex items-center justify-between gap-3">
                       <p className="text-sm text-white">{section.name}</p>
@@ -91,7 +104,7 @@ export function DemoWorkspace() {
               </div>
             </aside>
 
-            <section className="rounded-[18px] border border-white/8 bg-white/[0.03] p-5 lg:p-6">
+            <section className={`${panelClass} lg:p-6`}>
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="type-label text-[var(--color-accent)]">Tab viewer</p>
@@ -121,10 +134,7 @@ export function DemoWorkspace() {
 
               <div className="tab-grid mt-6">
                 {demoSession.measures.map((measure) => (
-                  <article
-                    key={measure.number}
-                    className="rounded-[16px] border border-white/8 bg-black/30 p-5"
-                  >
+                  <article key={measure.number} className={`${insetCardClass} rounded-[16px] p-5 hover:bg-black/40`}>
                     <div className="mb-4 flex items-center justify-between gap-3">
                       <div>
                         <p className="type-label text-[var(--color-accent)]">
@@ -147,7 +157,7 @@ export function DemoWorkspace() {
             </section>
 
             <aside className="space-y-6">
-              <div className="rounded-[18px] border border-white/8 bg-black/30 p-5">
+              <div className={railClass}>
                 <div className="flex items-center gap-3">
                   <Gauge className="h-5 w-5 text-[var(--color-accent)]" />
                   <div>
@@ -159,14 +169,11 @@ export function DemoWorkspace() {
                 </div>
               </div>
 
-              <div className="rounded-[18px] border border-white/8 bg-white/[0.03] p-5">
+              <div className={panelClass}>
                 <p className="type-label text-[var(--color-accent)]">Exports</p>
                 <div className="mt-5 space-y-3">
                   {demoSession.exports.map((format) => (
-                    <div
-                      key={format.label}
-                      className="rounded-[12px] border border-white/7 bg-black/25 px-4 py-4"
-                    >
+                    <div key={format.label} className={insetCardClass}>
                       <p className="text-sm text-white">{format.label}</p>
                       <p className="mt-1 text-xs text-[var(--color-text-muted)]">
                         {format.detail}
@@ -176,7 +183,7 @@ export function DemoWorkspace() {
                 </div>
               </div>
 
-              <div className="rounded-[18px] border border-white/8 bg-black/30 p-5">
+              <div className={railClass}>
                 <p className="type-label text-[var(--color-accent)]">
                   Arrangement tools
                 </p>
@@ -188,7 +195,7 @@ export function DemoWorkspace() {
                   ].map((tool) => (
                     <div
                       key={tool.label}
-                      className="flex items-center gap-3 rounded-[12px] border border-white/7 bg-white/[0.03] px-4 py-4"
+                      className="motion-surface-soft flex items-center gap-3 rounded-[12px] border border-white/7 bg-white/[0.03] px-4 py-4 hover:border-white/12 hover:bg-white/[0.05]"
                     >
                       <tool.icon className="h-4 w-4 text-[var(--color-accent)]" />
                       <p className="text-sm text-white">{tool.label}</p>
@@ -197,7 +204,7 @@ export function DemoWorkspace() {
                 </div>
               </div>
 
-              <div className="rounded-[18px] border border-white/8 bg-white/[0.03] p-5">
+              <div className={panelClass}>
                 <div className="flex items-center gap-3">
                   <Headphones className="h-5 w-5 text-[var(--color-accent)]" />
                   <div>
@@ -210,10 +217,7 @@ export function DemoWorkspace() {
                     { label: "Count-in", value: "1 bar" },
                     { label: "Loop mode", value: "Verse" },
                   ].map((item) => (
-                    <div
-                      key={item.label}
-                      className="rounded-[12px] border border-white/7 bg-black/25 px-4 py-4"
-                    >
+                    <div key={item.label} className={insetCardClass}>
                       <p className="text-[11px] uppercase tracking-[0.18em] text-white/38">
                         {item.label}
                       </p>
@@ -225,7 +229,7 @@ export function DemoWorkspace() {
             </aside>
           </div>
 
-          <div className="mt-8 rounded-[18px] border border-white/8 bg-black/40 p-5">
+          <div className="motion-surface mt-8 rounded-[18px] border border-white/8 bg-black/40 p-5 hover:border-white/14 hover:bg-black/45">
             <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
               <div>
                 <p className="type-label text-[var(--color-accent)]">Transport</p>
@@ -248,7 +252,7 @@ export function DemoWorkspace() {
               </div>
             </div>
           </div>
-        </section>
+        </AnimatedGroup>
       </div>
     </main>
   );
