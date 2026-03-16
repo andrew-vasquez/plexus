@@ -33,7 +33,7 @@ export function HeroHeader() {
           className={cn(
             "mx-auto max-w-7xl px-4 pt-2 transition-all duration-300 lg:px-10 lg:pt-0",
             (isScrolled || menuState) &&
-              "max-w-5xl overflow-hidden rounded-[18px] border border-white/10 bg-black/55 shadow-[0_22px_60px_-38px_rgba(0,0,0,0.88)] backdrop-blur-xl supports-[backdrop-filter]:bg-black/44",
+              "max-w-5xl overflow-hidden rounded-[18px] border border-white/10 bg-black/60 shadow-[0_22px_60px_-38px_rgba(0,0,0,0.88)] backdrop-blur-md supports-[backdrop-filter]:bg-black/50 sm:bg-black/55 sm:backdrop-blur-xl sm:supports-[backdrop-filter]:bg-black/44",
           )}
         >
           <div className="relative flex min-h-[64px] flex-wrap items-center justify-between gap-4 py-0 lg:min-h-0 lg:gap-0 lg:py-4">
@@ -45,7 +45,7 @@ export function HeroHeader() {
               <button
                 onClick={() => setMenuState((value) => !value)}
                 aria-label={menuState ? "Close Menu" : "Open Menu"}
-                className="relative z-20 flex h-11 w-11 shrink-0 translate-y-1 items-center justify-center lg:translate-y-0 lg:hidden"
+                className="relative z-40 flex h-11 w-11 shrink-0 translate-y-1 items-center justify-center lg:translate-y-0 lg:hidden"
                 type="button"
               >
                 <Menu
@@ -111,7 +111,7 @@ export function HeroHeader() {
               }}
               transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
               className={cn(
-                "order-last grid w-full overflow-hidden lg:hidden",
+                "relative z-40 order-last grid w-full overflow-hidden lg:hidden",
                 !menuState && "pointer-events-none",
               )}
             >

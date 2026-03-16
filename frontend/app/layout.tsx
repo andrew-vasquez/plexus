@@ -33,6 +33,11 @@ export const metadata: Metadata = {
     "Plexus turns raw guitar audio into editable tabs with a premium browser-based review workflow.",
   metadataBase: new URL("https://plexus.local"),
   applicationName: "Plexus",
+  icons: {
+    icon: "/icon",
+    shortcut: "/icon",
+    apple: "/apple-icon",
+  },
   keywords: [
     "Plexus",
     "guitar tab transcription",

@@ -14,7 +14,7 @@ export function HeroIntro() {
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-24 mx-auto h-[520px] max-w-5xl bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.07),transparent_58%)] blur-3xl"
+        className="pointer-events-none absolute inset-x-0 top-24 mx-auto h-[520px] max-w-5xl bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.07),transparent_58%)] blur-2xl sm:blur-3xl"
       />
       <div className="mx-auto max-w-7xl px-6 pt-28 md:pt-36 lg:px-10">
         <div className="mx-auto max-w-5xl text-center">
@@ -45,13 +45,12 @@ export function HeroIntro() {
           </AnimatedGroup>
 
           <AnimatedGroup
-            animateOnMount
             variants={{
               container: {
                 visible: {
                   transition: {
-                    staggerChildren: 0.06,
-                    delayChildren: 0.22,
+                    staggerChildren: 0.05,
+                    delayChildren: 0.08,
                   },
                 },
               },
@@ -79,13 +78,12 @@ export function HeroIntro() {
         </div>
 
         <AnimatedGroup
-          animateOnMount
           variants={{
             container: {
               visible: {
                 transition: {
-                  staggerChildren: 0.05,
-                  delayChildren: 0.35,
+                  staggerChildren: 0.04,
+                  delayChildren: 0.12,
                 },
               },
             },
@@ -104,8 +102,8 @@ export function HeroIntro() {
                 <span>{demoSession.confidence}</span>
               </div>
 
-              <div className="mt-6 grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-                <div className="rounded-[18px] border border-white/8 bg-white/[0.025] p-5">
+              <div className="mt-6 grid auto-rows-min gap-4 lg:grid-cols-[1.2fr_0.8fr] lg:grid-rows-2">
+                <div className="signal-intake-panel rounded-[18px] border border-white/8 bg-white/[0.025] p-5">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-white/50">Signal intake</p>
@@ -116,8 +114,8 @@ export function HeroIntro() {
                     </div>
                   </div>
 
-                  <div className="mt-6 rounded-[16px] border border-white/8 bg-black/60 p-4">
-                    <div className="waveform-bars h-36" aria-hidden="true">
+                  <div className="signal-intake-frame mt-6 rounded-[16px] border border-white/8 bg-black/60 p-4">
+                    <div className="waveform-bars signal-intake-bars h-36" aria-hidden="true">
                       {Array.from({ length: 36 }).map((_, index) => (
                         <span
                           key={index}
@@ -131,40 +129,66 @@ export function HeroIntro() {
                   </div>
                 </div>
 
-                <div className="grid gap-4">
-                  <div className="rounded-[18px] border border-white/8 bg-white/[0.025] p-5">
-                    <p className="text-sm text-white/50">Structured output</p>
-                    <div className="mt-4 space-y-3">
-                      {demoSession.sections.map((section) => (
-                        <div
-                          key={section.name}
-                          className="group flex items-center justify-between rounded-[14px] border border-white/7 bg-black/45 px-4 py-3 transition-colors duration-200 hover:border-white/14 hover:bg-white/[0.04]"
-                        >
-                          <div>
-                            <p className="text-sm text-white">{section.name}</p>
-                            <p className="mt-1 text-xs text-white/42">{section.note}</p>
-                          </div>
-                          <span className="text-[11px] uppercase tracking-[0.18em] text-white/56">
-                            {section.measures}
-                          </span>
+                <div className="flex h-full flex-col rounded-[18px] border border-white/8 bg-white/[0.025] p-5">
+                  <p className="text-sm text-white/50">Structured output</p>
+                  <div className="mt-4 space-y-3">
+                    {demoSession.sections.map((section) => (
+                      <div
+                        key={section.name}
+                        className="group flex items-center justify-between rounded-[14px] border border-white/7 bg-black/45 px-4 py-3 transition-colors duration-200 hover:border-white/14 hover:bg-white/[0.04]"
+                      >
+                        <div>
+                          <p className="text-sm text-white">{section.name}</p>
+                          <p className="mt-1 text-xs text-white/42">{section.note}</p>
                         </div>
-                      ))}
+                        <span className="text-[11px] uppercase tracking-[0.18em] text-white/56">
+                          {section.measures}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex h-full flex-col rounded-[18px] border border-white/8 bg-white/[0.025] p-5">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="max-w-md">
+                      <p className="text-sm text-white/50">Playback note</p>
+                      <p className="mt-3 text-lg leading-8 text-white/92">
+                        {demoSession.notes}
+                      </p>
+                    </div>
+                    <div className="hidden rounded-[10px] border border-white/10 bg-black/40 px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-white/50 sm:block">
+                      Review ready
                     </div>
                   </div>
 
-                  <div className="rounded-[18px] border border-white/8 bg-white/[0.025] p-5">
-                    <p className="text-sm text-white/50">Export path</p>
-                    <div className="mt-4 grid gap-3">
-                      {demoSession.exports.map((item) => (
-                        <div
-                          key={item.label}
-                          className="rounded-[14px] border border-white/7 bg-black/45 px-4 py-3 transition-colors duration-200 hover:border-white/14 hover:bg-white/[0.04]"
-                        >
-                          <p className="text-sm text-white">{item.label}</p>
-                          <p className="mt-1 text-xs text-white/42">{item.detail}</p>
-                        </div>
-                      ))}
-                    </div>
+                  <div className="mt-5 flex flex-wrap gap-3">
+                    {demoSession.sections.map((section) => (
+                      <div
+                        key={`${section.name}-pill`}
+                        className="rounded-[12px] border border-white/8 bg-black/45 px-3 py-2"
+                      >
+                        <p className="text-[11px] uppercase tracking-[0.18em] text-white/46">
+                          {section.name}
+                        </p>
+                        <p className="mt-2 text-sm text-white/78">{section.measures}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex h-full flex-col rounded-[18px] border border-white/8 bg-white/[0.025] p-5">
+                  <p className="text-sm text-white/50">Export path</p>
+                  <div className="mt-4 grid gap-3">
+                    {demoSession.exports.map((item) => (
+                      <div
+                        key={item.label}
+                        className="rounded-[14px] border border-white/7 bg-black/45 px-4 py-3 transition-colors duration-200 hover:border-white/14 hover:bg-white/[0.04]"
+                      >
+                        <p className="text-sm text-white">{item.label}</p>
+                        <p className="mt-1 text-xs text-white/42">{item.detail}</p>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>

@@ -17,6 +17,14 @@
 - Accent usage is restrained. White and grayscale lead. Cool highlights are secondary.
 - Motion should feel expensive and quiet, never loud or gimmicky.
 
+## Brand Mark
+- The Plexus mark is a compact signal path: one vertical accent bar and one precise waveform stroke.
+- The mark should live inside a dark rounded square with a thin border for app chrome, nav, footer, and browser icons.
+- Keep the stroke white or near-white on dark surfaces.
+- Keep the left accent bar brighter than the border so the mark reads quickly at favicon size.
+- Do not redraw, thicken, soften, or stylize the waveform into a friendlier or more playful icon.
+- Favicon, Apple icon, and in-app logo treatments should all use the same mark geometry.
+
 ## Non-Negotiables
 - Avoid bubbly or overly rounded UI.
 - Avoid glassmorphism-heavy blur, candy gradients, and startup-looking glow effects.
