@@ -1,259 +1,38 @@
-import Link from "next/link";
-import {
-  ArrowLeft,
-  Gauge,
-  Headphones,
-  ListMusic,
-  Play,
-  Repeat,
-  SlidersHorizontal,
-  TimerReset,
-} from "lucide-react";
-import { PlexusLogo } from "@/components/shared/PlexusLogo";
-import { AnimatedGroup } from "@/components/ui/animated-group";
-import { Button } from "@/components/ui/button";
 import { demoSession } from "@/lib/demo-data";
-
-const panelClass =
-  "motion-surface rounded-[18px] border border-white/8 bg-white/[0.03] p-5 hover:border-white/14 hover:bg-white/[0.04]";
-
-const railClass =
-  "motion-surface rounded-[18px] border border-white/8 bg-black/30 p-5 hover:border-white/14 hover:bg-black/35";
-
-const insetCardClass =
-  "motion-surface-soft rounded-[12px] border border-white/7 bg-black/25 px-4 py-4 hover:border-white/12 hover:bg-black/35";
+import {
+  DemoRightRail,
+  DemoSectionsRail,
+  DemoTabPanel,
+  DemoTransportBar,
+} from "@/components/studio/demo-workspace-sections";
+import {
+  StudioPageFrame,
+  StudioSurface,
+  StudioTopBar,
+} from "@/components/studio/shared";
 
 export function DemoWorkspace() {
   return (
-    <main className="relative min-h-screen overflow-hidden px-6 py-8 lg:px-10">
-      <div className="ambient-grid" aria-hidden="true" />
-      <div className="noise-layer" aria-hidden="true" />
+    <StudioPageFrame>
+      <StudioTopBar backHref="/studio" backLabel="Back to studio" />
 
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
-        <AnimatedGroup
-          animateOnMount
-          className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between"
-        >
-          <PlexusLogo />
-          <div className="flex flex-wrap items-center gap-3">
-            <Button asChild variant="ghost">
-              <Link href="/studio">
-                <ArrowLeft className="h-4 w-4" />
-                Back to studio
-              </Link>
-            </Button>
-          </div>
-        </AnimatedGroup>
-
-        <AnimatedGroup animateOnMount className="surface-panel p-6 lg:p-8">
-          <div className="flex flex-col gap-5 border-b border-white/10 pb-6 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <p className="type-label text-[var(--color-accent)]">Demo workspace</p>
-              <h1 className="mt-3 type-display text-4xl tracking-[-0.04em] text-white sm:text-5xl">
-                {demoSession.title}
-              </h1>
-              <p className="mt-4 text-sm leading-7 text-[var(--color-text-muted)]">
-                {demoSession.artist} • {demoSession.detectedTempo} •{" "}
-                {demoSession.tuning} • {demoSession.duration}
-              </p>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-3">
-              {[
-                { label: "Confidence", value: demoSession.confidence },
-                { label: "Sections", value: `${demoSession.sections.length} mapped` },
-                { label: "Exports", value: "GP5 / PDF / MIDI" },
-              ].map((stat) => (
-                <div
-                  key={stat.label}
-                  className="motion-surface-soft rounded-[14px] border border-white/7 bg-white/[0.03] px-4 py-4 hover:border-white/14 hover:bg-white/[0.04]"
-                >
-                  <p className="type-label text-[var(--color-accent)]">{stat.label}</p>
-                  <p className="mt-2 text-sm text-white">{stat.value}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-8 grid gap-6 xl:grid-cols-[220px_minmax(0,1fr)_320px]">
-            <aside className={railClass}>
-              <p className="type-label text-[var(--color-accent)]">Sections</p>
-              <div className="mt-5 space-y-3">
-                {demoSession.sections.map((section, index) => (
-                  <div
-                    key={section.name}
-                    className={`rounded-[12px] border px-4 py-4 ${
-                      index === 1
-                        ? "border-white/18 bg-white/[0.07]"
-                        : "border-white/7 bg-white/[0.03]"
-                    } motion-surface-soft hover:border-white/14`}
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <p className="text-sm text-white">{section.name}</p>
-                      <span className="text-[11px] uppercase tracking-[0.18em] text-white/38">
-                        {index === 1 ? "Active" : "Queued"}
-                      </span>
-                    </div>
-                    <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-                      {section.measures}
-                    </p>
-                    <p className="mt-3 text-xs leading-5 text-[var(--color-text-muted)]">
-                      {section.note}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </aside>
-
-            <section className={`${panelClass} lg:p-6`}>
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <p className="type-label text-[var(--color-accent)]">Tab viewer</p>
-                  <p className="mt-2 text-sm text-[var(--color-text-muted)]">
-                    Phase 1 uses a custom Plexus renderer built from seeded score
-                    data instead of a real Guitar Pro engine.
-                  </p>
-                </div>
-                <div className="rounded-[10px] border border-white/10 bg-black/25 px-4 py-2 text-[11px] uppercase tracking-[0.18em] text-white/75">
-                  Browser review
-                </div>
-              </div>
-
-              <div className="mt-6 rounded-[14px] border border-white/8 bg-black/35 p-4">
-                <div className="flex items-center justify-between gap-4 text-[11px] uppercase tracking-[0.18em] text-white/42">
-                  <span>Playback lane</span>
-                  <span>01:28 / 03:14</span>
-                </div>
-                <div className="mt-4 h-2 rounded-full bg-white/[0.06]">
-                  <div className="h-2 w-[44%] rounded-full bg-[linear-gradient(90deg,rgba(255,255,255,0.92),rgba(122,215,255,0.72))]" />
-                </div>
-                <div className="mt-3 flex items-center justify-between text-xs text-white/40">
-                  <span>Verse lock</span>
-                  <span>Loop ready</span>
-                </div>
-              </div>
-
-              <div className="tab-grid mt-6">
-                {demoSession.measures.map((measure) => (
-                  <article key={measure.number} className={`${insetCardClass} rounded-[16px] p-5 hover:bg-black/40`}>
-                    <div className="mb-4 flex items-center justify-between gap-3">
-                      <div>
-                        <p className="type-label text-[var(--color-accent)]">
-                          Measure {measure.number}
-                        </p>
-                        <p className="mt-2 text-sm text-white">{measure.label}</p>
-                      </div>
-                      <div className="rounded-[10px] border border-white/10 bg-white/[0.04] px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-white/65">
-                        {measure.chord}
-                      </div>
-                    </div>
-                    <div className="rounded-[12px] border border-white/7 bg-white/[0.03] p-4">
-                      <pre className="overflow-hidden text-xs leading-5 text-white/82">
-                        {measure.strings.join("\n")}
-                      </pre>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </section>
-
-            <aside className="space-y-6">
-              <div className={railClass}>
-                <div className="flex items-center gap-3">
-                  <Gauge className="h-5 w-5 text-[var(--color-accent)]" />
-                  <div>
-                    <p className="type-label text-[var(--color-accent)]">
-                      Session notes
-                    </p>
-                    <p className="mt-1 text-sm text-white">{demoSession.notes}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className={panelClass}>
-                <p className="type-label text-[var(--color-accent)]">Exports</p>
-                <div className="mt-5 space-y-3">
-                  {demoSession.exports.map((format) => (
-                    <div key={format.label} className={insetCardClass}>
-                      <p className="text-sm text-white">{format.label}</p>
-                      <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-                        {format.detail}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className={railClass}>
-                <p className="type-label text-[var(--color-accent)]">
-                  Arrangement tools
-                </p>
-                <div className="mt-5 space-y-3">
-                  {[
-                    { icon: ListMusic, label: "Section navigator" },
-                    { icon: SlidersHorizontal, label: "Playback speed" },
-                    { icon: Repeat, label: "Loop staging" },
-                  ].map((tool) => (
-                    <div
-                      key={tool.label}
-                      className="motion-surface-soft flex items-center gap-3 rounded-[12px] border border-white/7 bg-white/[0.03] px-4 py-4 hover:border-white/12 hover:bg-white/[0.05]"
-                    >
-                      <tool.icon className="h-4 w-4 text-[var(--color-accent)]" />
-                      <p className="text-sm text-white">{tool.label}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className={panelClass}>
-                <div className="flex items-center gap-3">
-                  <Headphones className="h-5 w-5 text-[var(--color-accent)]" />
-                  <div>
-                    <p className="type-label text-[var(--color-accent)]">Monitoring</p>
-                    <p className="mt-1 text-sm text-white">Metronome and cue mix staged</p>
-                  </div>
-                </div>
-                <div className="mt-4 grid grid-cols-2 gap-3">
-                  {[
-                    { label: "Count-in", value: "1 bar" },
-                    { label: "Loop mode", value: "Verse" },
-                  ].map((item) => (
-                    <div key={item.label} className={insetCardClass}>
-                      <p className="text-[11px] uppercase tracking-[0.18em] text-white/38">
-                        {item.label}
-                      </p>
-                      <p className="mt-2 text-sm text-white">{item.value}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </aside>
-          </div>
-
-          <div className="motion-surface mt-8 rounded-[18px] border border-white/8 bg-black/40 p-5 hover:border-white/14 hover:bg-black/45">
-            <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-              <div>
-                <p className="type-label text-[var(--color-accent)]">Transport</p>
-                <p className="mt-2 text-sm text-[var(--color-text-muted)]">
-                  Visual-only transport for phase 1. The custom Plexus player is
-                  intentionally deferred behind the core studio UI.
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                {[
-                  { icon: Play, label: "Play" },
-                  { icon: Repeat, label: "Loop" },
-                  { icon: TimerReset, label: "Half speed" },
-                ].map((action) => (
-                  <Button key={action.label} size="sm" type="button" variant="outline">
-                    <action.icon className="h-4 w-4" />
-                    {action.label}
-                  </Button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </AnimatedGroup>
-      </div>
-    </main>
+      <StudioSurface
+        eyebrow="Demo workspace"
+        title={demoSession.title}
+        description={`${demoSession.artist} • ${demoSession.detectedTempo} • ${demoSession.tuning} • ${demoSession.duration}`}
+        stats={[
+          { label: "Confidence", value: demoSession.confidence },
+          { label: "Sections", value: `${demoSession.sections.length} mapped` },
+          { label: "Exports", value: "GP5 / PDF / MIDI" },
+        ]}
+      >
+        <div className="mt-8 grid gap-6 xl:grid-cols-[280px_minmax(0,1fr)_320px]">
+          <DemoSectionsRail />
+          <DemoTabPanel />
+          <DemoRightRail />
+        </div>
+        <DemoTransportBar />
+      </StudioSurface>
+    </StudioPageFrame>
   );
 }

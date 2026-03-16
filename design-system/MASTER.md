@@ -75,7 +75,7 @@
   - slight lift
   - subtle border brightening
   - mild background shift
-  - favor calmer `400ms` to `520ms` easing over snappy `200ms` motion
+  - keep shared button and brand timing aligned to the landing cards, using the same `300ms` duration and softer standard easing curve
   - keep hover travel small, around `2px` to `3px`, so motion feels smooth instead of springy or stiff
 - Never use cartoonish scale or bounce on hover.
 
@@ -95,7 +95,7 @@
 - Hover motion:
   - subtle lift
   - border/value emphasis
-  - use a smooth, slightly slower easing curve so interactions feel deliberate, not twitchy
+  - use a smooth easing curve so interactions feel deliberate, not twitchy
   - prefer gentle glide over sharp lift; the landing page is the reference for interaction softness
   - no exaggerated tilt, bounce, or floating
 - Mobile menu sheets should blur the content directly behind the sheet while keeping menu text and actions fully crisp.
@@ -165,7 +165,7 @@
 - Reuse the shared button system before inventing new button styles.
 - Reuse utility and motion primitives before creating one-off animation patterns.
 - New pages should inherit the same surface, border, and spacing language.
-- Shared logo motion should be present but restrained: slight lift, mild icon/text drift, slower easing, and no flashy brand animation.
+- Shared logo motion should be present but restrained: slight lift, mild icon/text drift, and the same duration and easing as landing cards and primary buttons.
 - If a new section feels “cool” but not “credible,” reject it.
 
 ## Future Prompt Snippet
