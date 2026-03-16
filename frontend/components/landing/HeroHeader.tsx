@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PlexusLogo } from "@/components/shared/PlexusLogo";
 import { Button } from "@/components/ui/button";
 import { menuItems } from "@/components/landing/constants";
@@ -13,14 +12,34 @@ import { cn } from "@/lib/utils";
 export function HeroHeader() {
   const [menuState, setMenuState] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const isScrolledRef = useRef(false);
+  const frameRef = useRef<number | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 24);
+      if (frameRef.current !== null) {
+        return;
+      }
+
+      frameRef.current = window.requestAnimationFrame(() => {
+        frameRef.current = null;
+        const nextScrolled = window.scrollY > 24;
+
+        if (isScrolledRef.current !== nextScrolled) {
+          isScrolledRef.current = nextScrolled;
+          setIsScrolled(nextScrolled);
+        }
+      });
     };
 
+    handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (frameRef.current !== null) {
+        window.cancelAnimationFrame(frameRef.current);
+      }
+    };
   }, []);
 
   return (
@@ -31,7 +50,7 @@ export function HeroHeader() {
       >
         <div
           className={cn(
-            "mx-auto max-w-7xl px-4 pt-2 transition-all duration-300 lg:px-10 lg:pt-0",
+            "relative mx-auto max-w-7xl px-4 pt-2 transition-all duration-300 lg:px-10 lg:pt-0",
             (isScrolled || menuState) &&
               "max-w-5xl overflow-hidden rounded-[18px] border border-white/10 bg-black/55 shadow-[0_22px_60px_-38px_rgba(0,0,0,0.88)] backdrop-blur-xl supports-[backdrop-filter]:bg-black/44",
           )}
@@ -45,18 +64,20 @@ export function HeroHeader() {
               <button
                 onClick={() => setMenuState((value) => !value)}
                 aria-label={menuState ? "Close Menu" : "Open Menu"}
+                aria-expanded={menuState}
+                aria-controls="mobile-navigation"
                 className="relative z-20 flex h-11 w-11 shrink-0 translate-y-1 items-center justify-center lg:translate-y-0 lg:hidden"
                 type="button"
               >
                 <Menu
                   className={cn(
-                    "size-6 transition-all duration-200",
+                    "size-6 transform-gpu transition-all duration-200",
                     menuState && "scale-0 opacity-0",
                   )}
                 />
                 <X
                   className={cn(
-                    "absolute inset-0 m-auto size-6 scale-0 opacity-0 transition-all duration-200",
+                    "absolute inset-0 m-auto size-6 scale-0 opacity-0 transform-gpu transition-all duration-200",
                     menuState && "scale-100 opacity-100",
                   )}
                 />
@@ -88,38 +109,21 @@ export function HeroHeader() {
               </Button>
             </div>
 
-            <AnimatePresence initial={false}>
-              {menuState ? (
-                <motion.div
-                  key="mobile-menu-dismiss"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.16, ease: "easeOut" }}
-                  aria-hidden="true"
-                  className="fixed inset-0 z-30 bg-transparent lg:hidden"
-                  onClick={() => setMenuState(false)}
-                />
-              ) : null}
-            </AnimatePresence>
-
-            <motion.div
-              initial={false}
-              animate={{
-                gridTemplateRows: menuState ? "1fr" : "0fr",
-                opacity: menuState ? 1 : 0,
-              }}
-              transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+            <div
+              id="mobile-navigation"
               className={cn(
-                "order-last grid w-full overflow-hidden lg:hidden",
+                "order-last w-full overflow-hidden transition-[max-height,opacity] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] lg:hidden",
+                menuState
+                  ? "visible max-h-[calc(100vh-5.25rem)] opacity-100"
+                  : "invisible max-h-0 opacity-0",
                 !menuState && "pointer-events-none",
               )}
             >
-              <motion.div
-                initial={false}
-                animate={{ y: menuState ? 0 : -10 }}
-                transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
-                className="min-h-0"
+              <div
+                className={cn(
+                  "min-h-0 transform-gpu transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                  menuState ? "translate-y-0" : "-translate-y-2",
+                )}
               >
                 <div className="max-h-[calc(100vh-5.25rem)] overflow-y-auto overscroll-contain border-t border-white/8 px-1 pb-4 pt-6">
                   <ul className="space-y-6 text-base text-white/72">
@@ -151,8 +155,8 @@ export function HeroHeader() {
                     </Button>
                   </div>
                 </div>
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
           </div>
         </div>
       </nav>

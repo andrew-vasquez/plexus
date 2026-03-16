@@ -1,8 +1,12 @@
 "use client";
 
 import type { ReactNode } from "react";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { motion, type Variants, useReducedMotion } from "framer-motion";
+import {
+  useHydrated,
+  useSimpleMotion as usePointerSimpleMotion,
+} from "@/components/ui/use-simple-motion";
 import { cn } from "@/lib/utils";
 
 type AnimatedGroupProps = {
@@ -59,27 +63,8 @@ export function AnimatedGroup({
   animateOnMount = false,
 }: AnimatedGroupProps) {
   const prefersReducedMotion = useReducedMotion();
-  const [hasMounted, setHasMounted] = useState(false);
-  const [prefersSimpleMotion, setPrefersSimpleMotion] = useState(false);
-
-  useEffect(() => {
-    setHasMounted(true);
-    const mediaQuery = window.matchMedia("(hover: none), (pointer: coarse)");
-    const legacyMediaQuery = mediaQuery as MediaQueryList & {
-      addListener?: (listener: (event: MediaQueryListEvent) => void) => void;
-      removeListener?: (listener: (event: MediaQueryListEvent) => void) => void;
-    };
-    const update = () => setPrefersSimpleMotion(mediaQuery.matches);
-
-    update();
-    if ("addEventListener" in mediaQuery) {
-      mediaQuery.addEventListener("change", update);
-      return () => mediaQuery.removeEventListener("change", update);
-    }
-
-    legacyMediaQuery.addListener?.(update);
-    return () => legacyMediaQuery.removeListener?.(update);
-  }, []);
+  const prefersSimpleMotion = usePointerSimpleMotion();
+  const hasMounted = useHydrated();
 
   const useSimpleMotion = prefersReducedMotion || prefersSimpleMotion;
   const containerVariants = variants?.container ?? defaultContainerVariants;

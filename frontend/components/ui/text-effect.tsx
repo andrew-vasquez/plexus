@@ -1,7 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { motion, type Variants, useReducedMotion } from "framer-motion";
+import {
+  useHydrated,
+  useSimpleMotion as usePointerSimpleMotion,
+} from "@/components/ui/use-simple-motion";
 import { cn } from "@/lib/utils";
 
 type TextEffectProps = {
@@ -47,27 +51,8 @@ export function TextEffect({
   animateOnMount = false,
 }: TextEffectProps) {
   const prefersReducedMotion = useReducedMotion();
-  const [hasMounted, setHasMounted] = useState(false);
-  const [prefersSimpleMotion, setPrefersSimpleMotion] = useState(false);
-
-  useEffect(() => {
-    setHasMounted(true);
-    const mediaQuery = window.matchMedia("(hover: none), (pointer: coarse)");
-    const legacyMediaQuery = mediaQuery as MediaQueryList & {
-      addListener?: (listener: (event: MediaQueryListEvent) => void) => void;
-      removeListener?: (listener: (event: MediaQueryListEvent) => void) => void;
-    };
-    const update = () => setPrefersSimpleMotion(mediaQuery.matches);
-
-    update();
-    if ("addEventListener" in mediaQuery) {
-      mediaQuery.addEventListener("change", update);
-      return () => mediaQuery.removeEventListener("change", update);
-    }
-
-    legacyMediaQuery.addListener?.(update);
-    return () => legacyMediaQuery.removeListener?.(update);
-  }, []);
+  const prefersSimpleMotion = usePointerSimpleMotion();
+  const hasMounted = useHydrated();
 
   const useSimpleMotion = prefersReducedMotion || prefersSimpleMotion;
   const revealOnMount = !hasMounted || animateOnMount || useSimpleMotion;
@@ -93,16 +78,25 @@ export function TextEffect({
         }}
         className={cn(className)}
       >
-        {segments.map((segment, index) => (
+        {useSimpleMotion ? (
           <motion.span
-            key={`${segment}-${index}`}
-            variants={useSimpleMotion ? simpleItemVariants : itemVariants}
-            className="inline-block whitespace-pre"
+            variants={simpleItemVariants}
+            className="inline-block whitespace-pre-wrap"
           >
-            {segment}
-            {index < segments.length - 1 ? " " : ""}
+            {children}
           </motion.span>
-        ))}
+        ) : (
+          segments.map((segment, index) => (
+            <motion.span
+              key={`${segment}-${index}`}
+              variants={itemVariants}
+              className="inline-block whitespace-pre"
+            >
+              {segment}
+              {index < segments.length - 1 ? " " : ""}
+            </motion.span>
+          ))
+        )}
       </MotionTag>
     ) : null
   );
