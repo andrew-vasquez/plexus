@@ -1,11 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
-import { motion, type Variants, useReducedMotion } from "framer-motion";
-import {
-  useHydrated,
-  useSimpleMotion as usePointerSimpleMotion,
-} from "@/components/ui/use-simple-motion";
+import { AnimatePresence, motion, type Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 type TextEffectProps = {
@@ -31,17 +26,6 @@ const itemVariants: Variants = {
   },
 };
 
-const simpleItemVariants: Variants = {
-  hidden: { opacity: 0, y: 8 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.4,
-    },
-  },
-};
-
 export function TextEffect({
   children,
   className,
@@ -50,54 +34,40 @@ export function TextEffect({
   trigger = true,
   animateOnMount = false,
 }: TextEffectProps) {
-  const prefersReducedMotion = useReducedMotion();
-  const prefersSimpleMotion = usePointerSimpleMotion();
-  const hasMounted = useHydrated();
-
-  const useSimpleMotion = prefersReducedMotion || prefersSimpleMotion;
-  const revealOnMount = !hasMounted || animateOnMount || useSimpleMotion;
-  const segments = useMemo(() => children.split(" "), [children]);
   const MotionTag = motion[as] as typeof motion.p;
 
   return (
-    trigger ? (
-      <MotionTag
-        initial={!hasMounted ? false : "hidden"}
-        animate={revealOnMount ? "visible" : undefined}
-        whileInView={revealOnMount ? undefined : "visible"}
-        viewport={revealOnMount ? undefined : { once: true, amount: 0.3 }}
-        variants={{
-          hidden: { opacity: 0 },
-          visible: {
-            opacity: 1,
-            transition: {
-              staggerChildren: useSimpleMotion ? 0.02 : 0.035,
-              delayChildren: delay,
+    <AnimatePresence mode="wait">
+      {trigger ? (
+        <MotionTag
+          initial="hidden"
+          animate={animateOnMount ? "visible" : undefined}
+          whileInView={animateOnMount ? undefined : "visible"}
+          viewport={animateOnMount ? undefined : { once: true, amount: 0.3 }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.035,
+                delayChildren: delay,
+              },
             },
-          },
-        }}
-        className={cn(className)}
-      >
-        {useSimpleMotion ? (
-          <motion.span
-            variants={simpleItemVariants}
-            className="inline-block whitespace-pre-wrap"
-          >
-            {children}
-          </motion.span>
-        ) : (
-          segments.map((segment, index) => (
+          }}
+          className={cn(className)}
+        >
+          {children.split(" ").map((segment, index) => (
             <motion.span
               key={`${segment}-${index}`}
               variants={itemVariants}
               className="inline-block whitespace-pre"
             >
               {segment}
-              {index < segments.length - 1 ? " " : ""}
+              {index < children.split(" ").length - 1 ? " " : ""}
             </motion.span>
-          ))
-        )}
-      </MotionTag>
-    ) : null
+          ))}
+        </MotionTag>
+      ) : null}
+    </AnimatePresence>
   );
 }

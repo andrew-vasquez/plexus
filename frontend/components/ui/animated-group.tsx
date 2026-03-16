@@ -2,11 +2,7 @@
 
 import type { ReactNode } from "react";
 import React from "react";
-import { motion, type Variants, useReducedMotion } from "framer-motion";
-import {
-  useHydrated,
-  useSimpleMotion as usePointerSimpleMotion,
-} from "@/components/ui/use-simple-motion";
+import { motion, type Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 type AnimatedGroupProps = {
@@ -44,17 +40,6 @@ const defaultItemVariants: Variants = {
   },
 };
 
-const simpleItemVariants: Variants = {
-  hidden: { opacity: 0, y: 10 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.45,
-    },
-  },
-};
-
 export function AnimatedGroup({
   children,
   className,
@@ -62,23 +47,15 @@ export function AnimatedGroup({
   once = true,
   animateOnMount = false,
 }: AnimatedGroupProps) {
-  const prefersReducedMotion = useReducedMotion();
-  const prefersSimpleMotion = usePointerSimpleMotion();
-  const hasMounted = useHydrated();
-
-  const useSimpleMotion = prefersReducedMotion || prefersSimpleMotion;
   const containerVariants = variants?.container ?? defaultContainerVariants;
-  const itemVariants = useSimpleMotion
-    ? simpleItemVariants
-    : (variants?.item ?? defaultItemVariants);
-  const revealOnMount = !hasMounted || animateOnMount || useSimpleMotion;
+  const itemVariants = variants?.item ?? defaultItemVariants;
 
   return (
     <motion.div
-      initial={!hasMounted ? false : "hidden"}
-      animate={revealOnMount ? "visible" : undefined}
-      whileInView={revealOnMount ? undefined : "visible"}
-      viewport={revealOnMount ? undefined : { once, amount: 0.2 }}
+      initial="hidden"
+      animate={animateOnMount ? "visible" : undefined}
+      whileInView={animateOnMount ? undefined : "visible"}
+      viewport={animateOnMount ? undefined : { once, amount: 0.2 }}
       variants={containerVariants}
       className={cn(className)}
     >

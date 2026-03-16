@@ -45,7 +45,7 @@ export function StudioPageFrame({ children }: StudioPageFrameProps) {
       <div className="pointer-events-none absolute inset-y-0 left-[10%] hidden w-px bg-white/[0.04] xl:block" />
       <div className="pointer-events-none absolute inset-y-0 right-[12%] hidden w-px bg-white/[0.04] xl:block" />
 
-      <div className="relative mx-auto flex min-h-screen w-full max-w-[1480px] flex-col px-4 pb-12 pt-24 sm:px-6 lg:px-8">
+      <div className="relative mx-auto flex min-h-screen w-full max-w-[1480px] flex-col px-4 pb-12 pt-4 sm:px-6 sm:pt-5 lg:px-8 lg:pt-5">
         {children}
       </div>
     </main>
@@ -58,7 +58,7 @@ export function StudioTopBar({
   backLabel,
 }: StudioTopBarProps) {
   return (
-    <header className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+    <header className="mx-auto mb-8 flex w-full max-w-7xl flex-col gap-5 lg:px-10 lg:flex-row lg:items-center lg:justify-between">
       <AnimatedGroup
         animateOnMount
         className="flex flex-col gap-4 sm:flex-row sm:items-center"

@@ -13,8 +13,9 @@ export default function Icon() {
       <div
         style={{
           alignItems: "center",
-          background:
-            "radial-gradient(circle at 50% 0%, rgba(255,255,255,0.08), transparent 48%), #0b0d10",
+          backgroundColor: "#0b0d10",
+          backgroundImage:
+            "radial-gradient(circle at 50% 0%, rgba(255,255,255,0.08), transparent 48%)",
           border: "1px solid rgba(255,255,255,0.12)",
           borderRadius: "16px",
           color: "#f3f6f9",
