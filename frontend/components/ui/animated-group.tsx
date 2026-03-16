@@ -13,6 +13,7 @@ type AnimatedGroupProps = {
     item?: Variants;
   };
   once?: boolean;
+  animateOnMount?: boolean;
 };
 
 const defaultContainerVariants: Variants = {
@@ -44,6 +45,7 @@ export function AnimatedGroup({
   className,
   variants,
   once = true,
+  animateOnMount = false,
 }: AnimatedGroupProps) {
   const containerVariants = variants?.container ?? defaultContainerVariants;
   const itemVariants = variants?.item ?? defaultItemVariants;
@@ -51,8 +53,9 @@ export function AnimatedGroup({
   return (
     <motion.div
       initial="hidden"
-      whileInView="visible"
-      viewport={{ once, amount: 0.2 }}
+      animate={animateOnMount ? "visible" : undefined}
+      whileInView={animateOnMount ? undefined : "visible"}
+      viewport={animateOnMount ? undefined : { once, amount: 0.2 }}
       variants={containerVariants}
       className={cn(className)}
     >

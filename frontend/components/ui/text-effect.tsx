@@ -9,6 +9,7 @@ type TextEffectProps = {
   as?: keyof typeof motion;
   delay?: number;
   trigger?: boolean;
+  animateOnMount?: boolean;
 };
 
 const itemVariants: Variants = {
@@ -31,6 +32,7 @@ export function TextEffect({
   as = "p",
   delay = 0,
   trigger = true,
+  animateOnMount = false,
 }: TextEffectProps) {
   const MotionTag = motion[as] as typeof motion.p;
 
@@ -39,11 +41,13 @@ export function TextEffect({
       {trigger ? (
         <MotionTag
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
+          animate={animateOnMount ? "visible" : undefined}
+          whileInView={animateOnMount ? undefined : "visible"}
+          viewport={animateOnMount ? undefined : { once: true, amount: 0.3 }}
           variants={{
             hidden: { opacity: 0 },
             visible: {
+              opacity: 1,
               transition: {
                 staggerChildren: 0.035,
                 delayChildren: delay,

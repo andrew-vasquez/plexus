@@ -62,7 +62,7 @@ export function HeroSection() {
           />
           <div className="mx-auto max-w-7xl px-6 pt-28 md:pt-36 lg:px-10">
             <div className="mx-auto max-w-5xl text-center">
-              <AnimatedGroup variants={transitionVariants}>
+              <AnimatedGroup animateOnMount variants={transitionVariants}>
                 <Link
                   href="/studio"
                   className="group mx-auto flex w-fit items-center gap-4 rounded-[12px] border border-white/12 bg-white/[0.03] px-4 py-2 text-sm text-white/78 shadow-[0_20px_80px_-40px_rgba(0,0,0,0.9)] transition-all duration-300 hover:border-white/22 hover:bg-white/[0.06] hover:text-white"
@@ -76,6 +76,7 @@ export function HeroSection() {
 
                 <TextEffect
                   as="h1"
+                  animateOnMount
                   className="mt-10 text-balance text-6xl leading-none tracking-[-0.08em] text-white md:text-7xl lg:mt-16 xl:text-[5.7rem]"
                 >
                   Turn guitar audio into clean, editable tabs.
@@ -88,6 +89,7 @@ export function HeroSection() {
               </AnimatedGroup>
 
               <AnimatedGroup
+                animateOnMount
                 variants={{
                   container: {
                     visible: {
@@ -121,6 +123,7 @@ export function HeroSection() {
             </div>
 
             <AnimatedGroup
+              animateOnMount
               variants={{
                 container: {
                   visible: {
