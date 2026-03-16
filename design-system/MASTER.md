@@ -158,7 +158,7 @@
 - Don’t add flashy gradients to compensate for weak layout.
 - Don’t use oversized glowing blobs.
 - Don’t let marketing visuals overpower the app UI.
-- Don’t swap to a soft, friendly startup aesthetic.
+- Don’t drift into a friendly startup aesthetic.
 
 ## Implementation Guardrails
 - New components should prefer shared primitives from `/frontend/components/ui`.
@@ -192,7 +192,7 @@ Keep Plexus in its current premium dark product direction:
 - Reuse the same design vocabulary before writing code.
 
 ## Review Checklist
-- Does this still look like premium software?
+- Does this still feel like premium software?
 - Are the buttons sharp enough?
 - Is the color palette restrained enough?
 - Is the hero headline immediately visible and dominant?

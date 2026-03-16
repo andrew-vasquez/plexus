@@ -139,7 +139,10 @@ function PreviewSection() {
 
 function ExportsSection() {
   return (
-    <section id="exports" className="mx-auto max-w-7xl px-6 py-20 lg:px-10 lg:py-28">
+    <section
+      id="exports"
+      className="mx-auto max-w-7xl px-6 py-20 lg:px-10 lg:py-28"
+    >
       <AnimatedGroup className="rounded-[26px] border border-white/8 bg-white/[0.025] p-6 lg:p-8">
         <div className="max-w-2xl">
           <p className="text-[11px] uppercase tracking-[0.22em] text-white/44">
@@ -153,10 +156,15 @@ function ExportsSection() {
           {demoSession.exports.map((item) => (
             <div
               key={item.label}
-              className="rounded-[18px] border border-white/8 bg-black/35 p-5 transition-all duration-300 hover:border-white/16 hover:bg-black/50"
+              className="rounded-[18px] border border-white/8 bg-black/35 p-5 transition-all duration-300
+              hover:-translate-y-1 hover:border-white/16 hover:bg-black/50"
             >
-              <p className="text-lg tracking-[-0.03em] text-white">{item.label}</p>
-              <p className="mt-3 text-sm leading-7 text-white/50">{item.detail}</p>
+              <p className="text-lg tracking-[-0.03em] text-white">
+                {item.label}
+              </p>
+              <p className="mt-3 text-sm leading-7 text-white/50">
+                {item.detail}
+              </p>
             </div>
           ))}
         </div>
