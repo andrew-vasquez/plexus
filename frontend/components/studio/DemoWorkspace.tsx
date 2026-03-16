@@ -2,6 +2,7 @@ import Link from "next/link";
 import {
   ArrowLeft,
   Gauge,
+  Headphones,
   ListMusic,
   Play,
   Repeat,
@@ -51,7 +52,7 @@ export function DemoWorkspace() {
               ].map((stat) => (
                 <div
                   key={stat.label}
-                  className="rounded-[12px] border border-white/7 bg-white/[0.03] px-4 py-4"
+                  className="rounded-[14px] border border-white/7 bg-white/[0.03] px-4 py-4"
                 >
                   <p className="type-label text-[var(--color-accent)]">{stat.label}</p>
                   <p className="mt-2 text-sm text-white">{stat.value}</p>
@@ -64,12 +65,21 @@ export function DemoWorkspace() {
             <aside className="rounded-[18px] border border-white/8 bg-black/30 p-5">
               <p className="type-label text-[var(--color-accent)]">Sections</p>
               <div className="mt-5 space-y-3">
-                {demoSession.sections.map((section) => (
+                {demoSession.sections.map((section, index) => (
                   <div
                     key={section.name}
-                    className="rounded-[12px] border border-white/7 bg-white/[0.03] px-4 py-4"
+                    className={`rounded-[12px] border px-4 py-4 ${
+                      index === 1
+                        ? "border-white/18 bg-white/[0.07]"
+                        : "border-white/7 bg-white/[0.03]"
+                    }`}
                   >
-                    <p className="text-sm text-white">{section.name}</p>
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="text-sm text-white">{section.name}</p>
+                      <span className="text-[11px] uppercase tracking-[0.18em] text-white/38">
+                        {index === 1 ? "Active" : "Queued"}
+                      </span>
+                    </div>
                     <p className="mt-1 text-xs text-[var(--color-text-muted)]">
                       {section.measures}
                     </p>
@@ -92,6 +102,20 @@ export function DemoWorkspace() {
                 </div>
                 <div className="rounded-[10px] border border-white/10 bg-black/25 px-4 py-2 text-[11px] uppercase tracking-[0.18em] text-white/75">
                   Browser review
+                </div>
+              </div>
+
+              <div className="mt-6 rounded-[14px] border border-white/8 bg-black/35 p-4">
+                <div className="flex items-center justify-between gap-4 text-[11px] uppercase tracking-[0.18em] text-white/42">
+                  <span>Playback lane</span>
+                  <span>01:28 / 03:14</span>
+                </div>
+                <div className="mt-4 h-2 rounded-full bg-white/[0.06]">
+                  <div className="h-2 w-[44%] rounded-full bg-[linear-gradient(90deg,rgba(255,255,255,0.92),rgba(122,215,255,0.72))]" />
+                </div>
+                <div className="mt-3 flex items-center justify-between text-xs text-white/40">
+                  <span>Verse lock</span>
+                  <span>Loop ready</span>
                 </div>
               </div>
 
@@ -172,6 +196,32 @@ export function DemoWorkspace() {
                   ))}
                 </div>
               </div>
+
+              <div className="rounded-[18px] border border-white/8 bg-white/[0.03] p-5">
+                <div className="flex items-center gap-3">
+                  <Headphones className="h-5 w-5 text-[var(--color-accent)]" />
+                  <div>
+                    <p className="type-label text-[var(--color-accent)]">Monitoring</p>
+                    <p className="mt-1 text-sm text-white">Metronome and cue mix staged</p>
+                  </div>
+                </div>
+                <div className="mt-4 grid grid-cols-2 gap-3">
+                  {[
+                    { label: "Count-in", value: "1 bar" },
+                    { label: "Loop mode", value: "Verse" },
+                  ].map((item) => (
+                    <div
+                      key={item.label}
+                      className="rounded-[12px] border border-white/7 bg-black/25 px-4 py-4"
+                    >
+                      <p className="text-[11px] uppercase tracking-[0.18em] text-white/38">
+                        {item.label}
+                      </p>
+                      <p className="mt-2 text-sm text-white">{item.value}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </aside>
           </div>
 
@@ -190,7 +240,7 @@ export function DemoWorkspace() {
                   { icon: Repeat, label: "Loop" },
                   { icon: TimerReset, label: "Half speed" },
                 ].map((action) => (
-                  <Button key={action.label} type="button" variant="outline">
+                  <Button key={action.label} size="sm" type="button" variant="outline">
                     <action.icon className="h-4 w-4" />
                     {action.label}
                   </Button>

@@ -168,11 +168,11 @@ export function StudioShell() {
             </div>
 
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button type="button" onClick={() => inputRef.current?.click()}>
+              <Button size="sm" type="button" onClick={() => inputRef.current?.click()}>
                 <Upload className="h-4 w-4" />
-                Upload audio
+                Upload source
               </Button>
-              <Button disabled type="button" variant="outline">
+              <Button disabled size="sm" type="button" variant="outline">
                 <FileUp className="h-4 w-4" />
                 Guitar Pro import later
               </Button>
@@ -203,26 +203,51 @@ export function StudioShell() {
                     <h2 className="mt-3 text-2xl font-semibold text-white">
                       Audio first. Review fast.
                     </h2>
+                    <p className="mt-3 max-w-xl text-sm leading-7 text-[var(--color-text-muted)]">
+                      Use a clean file handoff here, then move directly into the
+                      review workspace once Plexus confirms receipt.
+                    </p>
                   </div>
-                  <AudioLines className="h-5 w-5 text-[var(--color-accent)]" />
+                  <span className="inline-flex size-12 items-center justify-center rounded-[12px] border border-white/10 bg-white/[0.03]">
+                    <AudioLines className="h-5 w-5 text-[var(--color-accent)]" />
+                  </span>
                 </div>
 
-                <label className="mt-6 block rounded-[14px] border border-white/8 bg-white/[0.03] p-6 transition-colors hover:border-[var(--color-accent)]/30 hover:bg-white/[0.05]">
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                      <p className="text-lg font-medium text-white">
+                <div className="mt-6 rounded-[16px] border border-white/8 bg-white/[0.03] p-6 transition-colors hover:border-white/14 hover:bg-white/[0.045]">
+                  <div className="flex flex-col gap-6">
+                    <div className="space-y-3">
+                      <p className="text-xl font-medium tracking-[-0.02em] text-white">
                         Drop WAV, MP3, or memo audio
                       </p>
-                      <p className="mt-2 text-sm leading-6 text-[var(--color-text-muted)]">
+                      <p className="max-w-xl text-sm leading-7 text-[var(--color-text-muted)]">
                         The backend confirms receipt. Plexus then stages a mock
-                        analysis path to the demo workspace.
+                        analysis path into the demo workspace so the next step
+                        feels immediate.
                       </p>
                     </div>
-                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-[12px] border border-white/10 bg-black/30">
-                      <Upload className="h-5 w-5 text-[var(--color-accent)]" />
-                    </span>
+
+                    <div className="flex flex-wrap gap-2">
+                      {["WAV", "MP3", "Phone memo", "Single take"].map((item) => (
+                        <span
+                          key={item}
+                          className="rounded-[10px] border border-white/10 bg-black/30 px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-white/52"
+                        >
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                      <Button type="button" onClick={() => inputRef.current?.click()}>
+                        <Upload className="h-4 w-4" />
+                        Choose audio file
+                      </Button>
+                      <p className="text-sm text-white/40">
+                        Demo handoff only. No local processing yet.
+                      </p>
+                    </div>
                   </div>
-                </label>
+                </div>
 
                 <div className="mt-6 rounded-[14px] border border-white/8 bg-white/[0.03] p-5">
                   <div className="flex items-center gap-3">
