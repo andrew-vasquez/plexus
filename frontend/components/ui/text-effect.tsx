@@ -1,6 +1,7 @@
 "use client";
 
-import { AnimatePresence, motion, type Variants } from "framer-motion";
+import { useEffect, useMemo, useState } from "react";
+import { motion, type Variants, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 type TextEffectProps = {
@@ -26,6 +27,17 @@ const itemVariants: Variants = {
   },
 };
 
+const simpleItemVariants: Variants = {
+  hidden: { opacity: 0, y: 8 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+    },
+  },
+};
+
 export function TextEffect({
   children,
   className,
@@ -34,40 +46,64 @@ export function TextEffect({
   trigger = true,
   animateOnMount = false,
 }: TextEffectProps) {
+  const prefersReducedMotion = useReducedMotion();
+  const [hasMounted, setHasMounted] = useState(false);
+  const [prefersSimpleMotion, setPrefersSimpleMotion] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+    const mediaQuery = window.matchMedia("(hover: none), (pointer: coarse)");
+    const legacyMediaQuery = mediaQuery as MediaQueryList & {
+      addListener?: (listener: (event: MediaQueryListEvent) => void) => void;
+      removeListener?: (listener: (event: MediaQueryListEvent) => void) => void;
+    };
+    const update = () => setPrefersSimpleMotion(mediaQuery.matches);
+
+    update();
+    if ("addEventListener" in mediaQuery) {
+      mediaQuery.addEventListener("change", update);
+      return () => mediaQuery.removeEventListener("change", update);
+    }
+
+    legacyMediaQuery.addListener?.(update);
+    return () => legacyMediaQuery.removeListener?.(update);
+  }, []);
+
+  const useSimpleMotion = prefersReducedMotion || prefersSimpleMotion;
+  const revealOnMount = !hasMounted || animateOnMount || useSimpleMotion;
+  const segments = useMemo(() => children.split(" "), [children]);
   const MotionTag = motion[as] as typeof motion.p;
 
   return (
-    <AnimatePresence mode="wait">
-      {trigger ? (
-        <MotionTag
-          initial="hidden"
-          animate={animateOnMount ? "visible" : undefined}
-          whileInView={animateOnMount ? undefined : "visible"}
-          viewport={animateOnMount ? undefined : { once: true, amount: 0.3 }}
-          variants={{
-            hidden: { opacity: 0 },
-            visible: {
-              opacity: 1,
-              transition: {
-                staggerChildren: 0.035,
-                delayChildren: delay,
-              },
+    trigger ? (
+      <MotionTag
+        initial={!hasMounted ? false : "hidden"}
+        animate={revealOnMount ? "visible" : undefined}
+        whileInView={revealOnMount ? undefined : "visible"}
+        viewport={revealOnMount ? undefined : { once: true, amount: 0.3 }}
+        variants={{
+          hidden: { opacity: 0 },
+          visible: {
+            opacity: 1,
+            transition: {
+              staggerChildren: useSimpleMotion ? 0.02 : 0.035,
+              delayChildren: delay,
             },
-          }}
-          className={cn(className)}
-        >
-          {children.split(" ").map((segment, index) => (
-            <motion.span
-              key={`${segment}-${index}`}
-              variants={itemVariants}
-              className="inline-block whitespace-pre"
-            >
-              {segment}
-              {index < children.split(" ").length - 1 ? " " : ""}
-            </motion.span>
-          ))}
-        </MotionTag>
-      ) : null}
-    </AnimatePresence>
+          },
+        }}
+        className={cn(className)}
+      >
+        {segments.map((segment, index) => (
+          <motion.span
+            key={`${segment}-${index}`}
+            variants={useSimpleMotion ? simpleItemVariants : itemVariants}
+            className="inline-block whitespace-pre"
+          >
+            {segment}
+            {index < segments.length - 1 ? " " : ""}
+          </motion.span>
+        ))}
+      </MotionTag>
+    ) : null
   );
 }

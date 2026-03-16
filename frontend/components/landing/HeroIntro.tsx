@@ -104,34 +104,64 @@ export function HeroIntro() {
                 <span>{demoSession.confidence}</span>
               </div>
 
-              <div className="mt-6 grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-                <div className="signal-intake-panel rounded-[18px] border border-white/8 bg-white/[0.025] p-5">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-white/50">Signal intake</p>
-                      <p className="mt-2 text-xl text-white">Velvet Lights.wav</p>
+              <div className="mt-6 grid auto-rows-min gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+                <div className="grid h-full gap-4 lg:grid-rows-[auto_1fr]">
+                  <div className="signal-intake-panel rounded-[18px] border border-white/8 bg-white/[0.025] p-5">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-white/50">Signal intake</p>
+                        <p className="mt-2 text-xl text-white">Velvet Lights.wav</p>
+                      </div>
+                      <div className="rounded-[10px] border border-white/10 bg-black/40 px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-white/58">
+                        112 BPM / Drop D
+                      </div>
                     </div>
-                    <div className="rounded-[10px] border border-white/10 bg-black/40 px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-white/58">
-                      112 BPM / Drop D
+
+                    <div className="signal-intake-frame mt-6 rounded-[16px] border border-white/8 bg-black/60 p-4">
+                      <div className="waveform-bars signal-intake-bars h-36" aria-hidden="true">
+                        {Array.from({ length: 36 }).map((_, index) => (
+                          <span
+                            key={index}
+                            style={{
+                              height: `${24 + ((index * 13) % 82)}px`,
+                              animationDelay: `${index * 45}ms`,
+                            }}
+                          />
+                        ))}
+                      </div>
                     </div>
                   </div>
 
-                  <div className="signal-intake-frame mt-6 rounded-[16px] border border-white/8 bg-black/60 p-4">
-                    <div className="waveform-bars signal-intake-bars h-36" aria-hidden="true">
-                      {Array.from({ length: 36 }).map((_, index) => (
-                        <span
-                          key={index}
-                          style={{
-                            height: `${24 + ((index * 13) % 82)}px`,
-                            animationDelay: `${index * 45}ms`,
-                          }}
-                        />
+                  <div className="rounded-[18px] border border-white/8 bg-white/[0.025] p-5 lg:h-full">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="max-w-md">
+                        <p className="text-sm text-white/50">Playback note</p>
+                        <p className="mt-3 text-lg leading-8 text-white/92">
+                          {demoSession.notes}
+                        </p>
+                      </div>
+                      <div className="hidden rounded-[10px] border border-white/10 bg-black/40 px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-white/50 sm:block">
+                        Review ready
+                      </div>
+                    </div>
+
+                    <div className="mt-5 flex flex-wrap gap-3">
+                      {demoSession.sections.map((section) => (
+                        <div
+                          key={`${section.name}-pill`}
+                          className="rounded-[12px] border border-white/8 bg-black/45 px-3 py-2"
+                        >
+                          <p className="text-[11px] uppercase tracking-[0.18em] text-white/46">
+                            {section.name}
+                          </p>
+                          <p className="mt-2 text-sm text-white/78">{section.measures}</p>
+                        </div>
                       ))}
                     </div>
                   </div>
                 </div>
 
-                <div className="grid gap-4">
+                <div className="grid h-full gap-4">
                   <div className="rounded-[18px] border border-white/8 bg-white/[0.025] p-5">
                     <p className="text-sm text-white/50">Structured output</p>
                     <div className="mt-4 space-y-3">
