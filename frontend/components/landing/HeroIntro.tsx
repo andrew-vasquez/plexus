@@ -14,7 +14,7 @@ export function HeroIntro() {
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-24 mx-auto h-[520px] max-w-5xl bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.07),transparent_58%)] blur-3xl"
+        className="pointer-events-none absolute inset-x-0 top-24 mx-auto h-[520px] max-w-5xl bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.07),transparent_58%)] blur-2xl sm:blur-3xl"
       />
       <div className="mx-auto max-w-7xl px-6 pt-28 md:pt-36 lg:px-10">
         <div className="mx-auto max-w-5xl text-center">
@@ -45,13 +45,12 @@ export function HeroIntro() {
           </AnimatedGroup>
 
           <AnimatedGroup
-            animateOnMount
             variants={{
               container: {
                 visible: {
                   transition: {
-                    staggerChildren: 0.06,
-                    delayChildren: 0.22,
+                    staggerChildren: 0.05,
+                    delayChildren: 0.08,
                   },
                 },
               },
@@ -79,13 +78,12 @@ export function HeroIntro() {
         </div>
 
         <AnimatedGroup
-          animateOnMount
           variants={{
             container: {
               visible: {
                 transition: {
-                  staggerChildren: 0.05,
-                  delayChildren: 0.35,
+                  staggerChildren: 0.04,
+                  delayChildren: 0.12,
                 },
               },
             },
