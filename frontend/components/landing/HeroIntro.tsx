@@ -105,7 +105,7 @@ export function HeroIntro() {
               </div>
 
               <div className="mt-6 grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-                <div className="rounded-[18px] border border-white/8 bg-white/[0.025] p-5">
+                <div className="signal-intake-panel rounded-[18px] border border-white/8 bg-white/[0.025] p-5">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-white/50">Signal intake</p>
@@ -116,8 +116,8 @@ export function HeroIntro() {
                     </div>
                   </div>
 
-                  <div className="mt-6 rounded-[16px] border border-white/8 bg-black/60 p-4">
-                    <div className="waveform-bars h-36" aria-hidden="true">
+                  <div className="signal-intake-frame mt-6 rounded-[16px] border border-white/8 bg-black/60 p-4">
+                    <div className="waveform-bars signal-intake-bars h-36" aria-hidden="true">
                       {Array.from({ length: 36 }).map((_, index) => (
                         <span
                           key={index}
