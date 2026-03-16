@@ -45,7 +45,7 @@ export function HeroHeader() {
               <button
                 onClick={() => setMenuState((value) => !value)}
                 aria-label={menuState ? "Close Menu" : "Open Menu"}
-                className="relative z-20 flex h-11 w-11 shrink-0 translate-y-1 items-center justify-center lg:translate-y-0 lg:hidden"
+                className="relative z-40 flex h-11 w-11 shrink-0 translate-y-1 items-center justify-center lg:translate-y-0 lg:hidden"
                 type="button"
               >
                 <Menu
@@ -111,7 +111,7 @@ export function HeroHeader() {
               }}
               transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
               className={cn(
-                "order-last grid w-full overflow-hidden lg:hidden",
+                "relative z-40 order-last grid w-full overflow-hidden lg:hidden",
                 !menuState && "pointer-events-none",
               )}
             >
