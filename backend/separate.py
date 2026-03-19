@@ -24,8 +24,6 @@ def separate_stems(audio_file_path: str, stems_to_remove: list[str]) -> str:
     Returns the path to the mixed output file.
     """
 
-    # Run Demucs with the 6 stem model
-    # --two-stems is gone, we want all 6 this time
     print(f"Separating stems from {audio_file_path}...")
     subprocess.run(
         ["python", "-m", "demucs", "--model", "htdemucs_6s", audio_file_path]
@@ -45,7 +43,6 @@ def separate_stems(audio_file_path: str, stems_to_remove: list[str]) -> str:
     print(f"Removing stems: {stems_to_remove}")
 
     # Mix the kept stems together using pydub
-    # Same idea as reduce() in JavaScript — fold a list into one value
     result = None
 
     for stem in stems_to_keep:

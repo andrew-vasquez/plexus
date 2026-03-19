@@ -46,7 +46,6 @@ async def separate_stems_endpoint(
     # Call your separate module
     output_path = separate_stems(upload_path, remove_list)
     
-    # Return the path for now — later this will return the actual file
     return {
         "message": "Stems separated successfully",
         "output": output_path,

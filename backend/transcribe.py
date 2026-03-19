@@ -47,7 +47,7 @@ def transcribe_audio(audio_file_path: str) -> list:
         ICASSP_2022_MODEL_PATH,
     )
 
-    # Save the MIDI file next to the input file — keeping your original logic
+    # Save the MIDI file next to the input file 
     audio_path = Path(audio_file_path)
     midi_output_path = audio_path.with_suffix(".mid")
     midi_data.write(str(midi_output_path))
@@ -86,6 +86,3 @@ def process_song(audio_file_path: str) -> list:
 if __name__ == "__main__":
     # Use process_song for a full mix like a real song
     process_song("chimera.mp3")
-
-    # Or use transcribe_audio directly if you already have a clean guitar recording
-    # transcribe_audio("guitartest.wav")
