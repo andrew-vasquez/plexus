@@ -13,6 +13,10 @@ backend/**/*.pyc
 backend/.pytest_cache/
 backend/.mypy_cache/
 backend/.ruff_cache/
+backend/uploads/
+backend/separated/
+backend/transcribed/
+backend/outputs/
 
 # frontend / Next.js
 frontend/node_modules/
