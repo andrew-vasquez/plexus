@@ -17,6 +17,7 @@ backend/uploads/
 backend/separated/
 backend/transcribed/
 backend/outputs/
+backend/mp3s/
 
 # frontend / Next.js
 frontend/node_modules/

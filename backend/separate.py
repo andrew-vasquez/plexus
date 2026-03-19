@@ -6,6 +6,18 @@ from pydub import AudioSegment
 ALL_STEMS = ["drums", "bass", "vocals", "guitar", "piano", "other"]
 
 
+def load_audio(file_path: str) -> AudioSegment:
+    ext = Path(file_path).suffix.lower()
+    if ext == ".mp3":
+        return AudioSegment.from_mp3(file_path)
+    elif ext == ".wav":
+        return AudioSegment.from_wav(file_path)
+    elif ext == ".flac":
+        return AudioSegment.from_file(file_path, format="flac")
+    else:
+        raise ValueError(f"Unsupported file format: {ext}")
+
+
 def separate_stems(audio_file_path: str, stems_to_remove: list[str]) -> str:
     """
     Takes an audio file and a list of stems to remove.
@@ -37,12 +49,12 @@ def separate_stems(audio_file_path: str, stems_to_remove: list[str]) -> str:
     result = None
 
     for stem in stems_to_keep:
-        stem_path = f"{stems_dir}/{stem}.wav"
+        stem_path = f"{stems_dir}/{stem}.mp3"
 
         if not os.path.exists(stem_path):
             raise Exception(f"Stem file not found: {stem_path}")
 
-        audio = AudioSegment.from_wav(stem_path)
+        audio = load_audio(stem_path)
 
         if result is None:
             result = audio  # first stem becomes the base
