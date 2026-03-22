@@ -32,7 +32,6 @@ async def separate_stems_endpoint(
     stems_to_remove: str = "vocals,drums"  # comma separated string from frontend
 ):
     # Save the uploaded file to disk first
-    # Same pattern as fs.writeFileSync in Node
     upload_path = f"uploads/{file.filename}"
     os.makedirs("uploads", exist_ok=True)
     
@@ -40,7 +39,6 @@ async def separate_stems_endpoint(
         shutil.copyfileobj(file.file, buffer)
     
     # Parse the comma separated stems string into a list
-    # Same as "vocals,drums".split(",") in JS
     remove_list = [s.strip() for s in stems_to_remove.split(",")]
     
     # Call your separate module
