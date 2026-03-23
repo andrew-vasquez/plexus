@@ -294,6 +294,185 @@ input[type="file"] {
     all 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.clerk-root {
+  --plexus-clerk-motion:
+    transform 300ms cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 300ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 300ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1),
+    color 300ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --plexus-clerk-duration: 300ms;
+  --plexus-clerk-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
+  min-width: 0;
+}
+
+.clerk-root .clerk-motion-button {
+  transition: all var(--plexus-clerk-duration) var(--plexus-clerk-ease) !important;
+  transition: var(--plexus-clerk-motion) !important;
+  transition-property: transform, background-color, border-color, box-shadow, color, opacity !important;
+  transition-duration: var(--plexus-clerk-duration) !important;
+  transition-timing-function: var(--plexus-clerk-ease) !important;
+  animation: none !important;
+  will-change: transform;
+}
+
+.clerk-root .clerk-motion-button::before,
+.clerk-root .clerk-motion-button::after,
+.clerk-root .clerk-motion-button *,
+.clerk-root .clerk-motion-icon {
+  transition: all var(--plexus-clerk-duration) var(--plexus-clerk-ease) !important;
+  transition: var(--plexus-clerk-motion) !important;
+  transition-property: transform, background-color, border-color, box-shadow, color, opacity !important;
+  transition-duration: var(--plexus-clerk-duration) !important;
+  transition-timing-function: var(--plexus-clerk-ease) !important;
+  animation: none !important;
+}
+
+.clerk-root :is(.cl-socialButtonsBlockButton, .cl-formButtonPrimary, .cl-profileSectionPrimaryButton, .cl-profileSectionSecondaryButton, .cl-navbarButton) {
+  transition: all var(--plexus-clerk-duration) var(--plexus-clerk-ease) !important;
+  transition-property: transform, background-color, border-color, box-shadow, color, opacity !important;
+  transition-duration: var(--plexus-clerk-duration) !important;
+  transition-timing-function: var(--plexus-clerk-ease) !important;
+}
+
+.clerk-root :is(.cl-socialButtonsBlockButton, .cl-formButtonPrimary, .cl-profileSectionPrimaryButton, .cl-profileSectionSecondaryButton, .cl-navbarButton) :is(svg, img, span, div) {
+  transition: all var(--plexus-clerk-duration) var(--plexus-clerk-ease) !important;
+  transition-property: transform, background-color, border-color, box-shadow, color, opacity !important;
+  transition-duration: var(--plexus-clerk-duration) !important;
+  transition-timing-function: var(--plexus-clerk-ease) !important;
+}
+
+.clerk-root .clerk-card-shell,
+.clerk-root .clerk-card-box,
+.clerk-root .clerk-profile-card-box,
+.clerk-root .clerk-page-scroll-box,
+.clerk-root .clerk-profile-page {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+.clerk-root .clerk-page-scroll-box {
+  overflow-x: hidden !important;
+}
+
+.clerk-root .clerk-profile-navbar {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.clerk-user-button-anchor {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.clerk-user-button-anchor > * {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.clerk-user-button-box,
+.clerk-user-button-avatar-box,
+.clerk-user-button-trigger {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  flex: 0 0 auto;
+}
+
+.clerk-root .clerk-profile-navbar-button {
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.875rem;
+  text-align: left;
+}
+
+.clerk-root .clerk-profile-navbar-button > * {
+  min-width: 0;
+  flex-shrink: 0;
+}
+
+.clerk-root .clerk-profile-navbar-button :is(span, p, div) {
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.clerk-root [class*="profileSection"],
+.clerk-root [class*="accordionTriggerButton"],
+.clerk-root [class*="accordionContent"],
+.clerk-root [class*="userPreview"],
+.clerk-root [class*="identityPreview"] {
+  min-width: 0;
+}
+
+.clerk-root [class*="profileSection"] :is(p, span, div),
+.clerk-root [class*="formField"] :is(label, span, p),
+.clerk-root [class*="identityPreview"] :is(span, p, div) {
+  overflow-wrap: anywhere;
+}
+
+.clerk-root [class*="formFieldInput"],
+.clerk-root [class*="formButtonPrimary"],
+.clerk-root [class*="socialButtonsBlockButton"],
+.clerk-root [class*="profileSectionPrimaryButton"],
+.clerk-root [class*="profileSectionSecondaryButton"] {
+  min-width: 0;
+}
+
+@media (min-width: 768px) {
+  .clerk-root .clerk-profile-navbar {
+    max-width: min(17.5rem, 32%);
+    flex: 0 0 min(17.5rem, 32%);
+  }
+
+  .clerk-root .clerk-profile-page {
+    flex: 1 1 0%;
+  }
+}
+
+@media (max-width: 640px) {
+  .clerk-root .clerk-profile-navbar {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .clerk-root .clerk-card-shell,
+  .clerk-root .clerk-card-box,
+  .clerk-root .clerk-page-scroll-box {
+    border-radius: 18px !important;
+  }
+
+  .clerk-root .clerk-profile-navbar-button {
+    min-height: 2.5rem;
+    padding-inline: 0.875rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .clerk-root .clerk-profile-navbar-button {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .clerk-root [class*="profileSection"] {
+    padding-inline: 0.875rem !important;
+  }
+
+  .clerk-root [class*="formFieldInput"] {
+    padding-inline: 0.875rem !important;
+  }
+}
+
 @media (min-width: 900px) {
   .tab-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

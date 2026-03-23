@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import { ClerkProvider } from "@clerk/nextjs";
 import {
   Public_Sans,
   IBM_Plex_Mono,
   Syne,
 } from "next/font/google";
+import { clerkAppearance } from "@/lib/clerk";
 import "./globals.css";
 
 const syne = Syne({
@@ -57,7 +59,13 @@ export default function RootLayout({
       <body
         className={`${syne.variable} ${plexSans.variable} ${plexMono.variable} antialiased`}
       >
-        {children}
+        <ClerkProvider
+          appearance={clerkAppearance}
+          signInUrl="/sign-in"
+          signUpUrl="/sign-up"
+        >
+          {children}
+        </ClerkProvider>
       </body>
     </html>
   );

@@ -4,8 +4,11 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import {
+  LandingDesktopAuthActions,
+  LandingMobileAuthActions,
+} from "@/components/auth/AuthControls";
 import { PlexusLogo } from "@/components/shared/PlexusLogo";
-import { Button } from "@/components/ui/button";
 import { menuItems } from "@/components/landing/constants";
 import { scrollToHash } from "@/components/landing/utils";
 import { cn } from "@/lib/utils";
@@ -79,14 +82,7 @@ export function HeroHeader() {
               </ul>
             </div>
 
-            <div className="hidden items-center gap-3 lg:flex">
-              <Button asChild variant="ghost" size="sm">
-                <Link href="/studio/demo">Demo</Link>
-              </Button>
-              <Button asChild size="sm">
-                <Link href="/studio">Open Studio</Link>
-              </Button>
-            </div>
+            <LandingDesktopAuthActions />
 
             <AnimatePresence initial={false}>
               {menuState ? (
@@ -139,16 +135,9 @@ export function HeroHeader() {
                   </ul>
 
                   <div className="mt-6 flex flex-col gap-3 border-t border-white/8 pt-6">
-                    <Button asChild variant="outline">
-                      <Link href="/studio/demo" onClick={() => setMenuState(false)}>
-                        Preview the workspace
-                      </Link>
-                    </Button>
-                    <Button asChild>
-                      <Link href="/studio" onClick={() => setMenuState(false)}>
-                        Open Studio
-                      </Link>
-                    </Button>
+                    <LandingMobileAuthActions
+                      onNavigate={() => setMenuState(false)}
+                    />
                   </div>
                 </div>
               </motion.div>

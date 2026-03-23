@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ArrowLeft } from "lucide-react";
+import { StudioAuthControls } from "@/components/auth/AuthControls";
 import { ActionLink } from "@/components/shared/ActionLink";
 import { PlexusLogo } from "@/components/shared/PlexusLogo";
 import { AnimatedGroup } from "@/components/ui/animated-group";
@@ -89,6 +90,7 @@ export function StudioTopBar({
         className="flex flex-col gap-3 sm:flex-row sm:items-center"
       >
         {secondaryAction}
+        <StudioAuthControls />
       </AnimatedGroup>
     </header>
   );
