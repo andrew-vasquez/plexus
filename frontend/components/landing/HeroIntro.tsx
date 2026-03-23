@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { demoSession, heroStats } from "@/lib/demo-data";
 import { AnimatedGroup } from "@/components/ui/animated-group";
 import { Button } from "@/components/ui/button";
@@ -6,6 +9,9 @@ import { TextEffect } from "@/components/ui/text-effect";
 import { ArrowRight, transitionVariants } from "@/components/landing/constants";
 
 export function HeroIntro() {
+  const pathname = usePathname();
+  const routeAnimationKey = `hero-${pathname}`;
+
   return (
     <section className="relative">
       <div
@@ -18,7 +24,11 @@ export function HeroIntro() {
       />
       <div className="mx-auto max-w-7xl px-6 pt-28 md:pt-36 lg:px-10">
         <div className="mx-auto max-w-5xl text-center">
-          <AnimatedGroup animateOnMount variants={transitionVariants}>
+          <AnimatedGroup
+            key={`${routeAnimationKey}-intro`}
+            animateOnMount
+            variants={transitionVariants}
+          >
             <Link
               href="/studio"
               className="group mx-auto flex w-fit items-center gap-4 rounded-[12px] border border-white/12 bg-white/[0.03] px-4 py-2 text-sm text-white/78 shadow-[0_20px_80px_-40px_rgba(0,0,0,0.9)] transition-all duration-300 hover:border-white/22 hover:bg-white/[0.06] hover:text-white"
@@ -56,6 +66,8 @@ export function HeroIntro() {
               },
               ...transitionVariants,
             }}
+            key={`${routeAnimationKey}-actions`}
+            animateOnMount
             className="mt-12 flex flex-col items-center justify-center gap-3 md:flex-row"
           >
             <div className="rounded-[14px] border border-white/10 bg-white/[0.03] p-1">
@@ -89,6 +101,8 @@ export function HeroIntro() {
             },
             ...transitionVariants,
           }}
+          key={`${routeAnimationKey}-preview`}
+          animateOnMount
           className="mt-16 md:mt-20"
         >
           <div className="relative mx-auto max-w-6xl overflow-hidden rounded-[28px] border border-white/10 bg-[#0a0a0b] p-3 shadow-[0_30px_120px_-50px_rgba(0,0,0,0.95)]">
@@ -196,7 +210,11 @@ export function HeroIntro() {
           </div>
         </AnimatedGroup>
 
-        <AnimatedGroup className="mt-8 grid gap-4 md:grid-cols-3">
+        <AnimatedGroup
+          key={`${routeAnimationKey}-stats`}
+          animateOnMount
+          className="mt-8 grid gap-4 md:grid-cols-3"
+        >
           {heroStats.map((stat) => (
             <div
               key={stat.label}
