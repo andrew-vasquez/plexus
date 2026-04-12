@@ -7,7 +7,7 @@
     "dev": "vite dev",
     "build": "vite build && tsc --noEmit",
     "preview": "vite preview",
-    "start": "vite preview"
+    "start": "node .output/server/index.mjs"
   },
   "dependencies": {
     "@clerk/tanstack-react-start": "0.27.14",
@@ -23,6 +23,7 @@
     "clsx": "^2.1.1",
     "framer-motion": "^12.36.0",
     "lucide-react": "^0.577.0",
+    "nitro": "^3.0.1-20260410-164248-8ab58a4b",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "srvx": "^0.11.9",
