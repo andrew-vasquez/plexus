@@ -24,13 +24,14 @@ type StudioTopBarProps = {
   secondaryAction?: ReactNode;
   backHref?: string;
   backLabel?: string;
+  showAuthControls?: boolean;
 };
 
 type StudioSurfaceProps = {
   eyebrow: string;
   title: ReactNode;
   description: ReactNode;
-  stats: { label: string; value: string }[];
+  stats?: { label: string; value: string }[];
   children: ReactNode;
 };
 
@@ -57,6 +58,7 @@ export function StudioTopBar({
   secondaryAction,
   backHref,
   backLabel,
+  showAuthControls = true,
 }: StudioTopBarProps) {
   return (
     <header className="mx-auto mb-8 flex w-full max-w-7xl flex-col gap-5 lg:px-10 lg:flex-row lg:items-center lg:justify-between">
@@ -90,7 +92,7 @@ export function StudioTopBar({
         className="flex flex-col gap-3 sm:flex-row sm:items-center"
       >
         {secondaryAction}
-        <StudioAuthControls />
+        {showAuthControls ? <StudioAuthControls /> : null}
       </AnimatedGroup>
     </header>
   );
@@ -100,13 +102,17 @@ export function StudioSurface({
   eyebrow,
   title,
   description,
-  stats,
+  stats = [],
   children,
 }: StudioSurfaceProps) {
   return (
     <AnimatedGroup animateOnMount className={`${studioPanelClass} p-6 sm:p-8`}>
-      <div className="flex min-w-0 flex-col gap-8 border-b border-white/8 pb-8">
-        <div className="flex min-w-0 flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+      <div
+        className={`flex min-w-0 flex-col ${stats.length > 0 ? "gap-8 border-b border-white/8 pb-8" : "gap-6 pb-2"}`}
+      >
+        <div
+          className={`flex min-w-0 flex-col gap-6 ${stats.length > 0 ? "xl:flex-row xl:items-end xl:justify-between" : ""}`}
+        >
           <div className="min-w-0 max-w-4xl">
             <p className="type-label text-[var(--color-accent)]">{eyebrow}</p>
             <h1 className="mt-4 max-w-4xl text-balance text-4xl tracking-[-0.06em] text-white sm:text-5xl lg:text-6xl">
@@ -117,16 +123,18 @@ export function StudioSurface({
             </p>
           </div>
 
-          <div className="grid min-w-0 gap-3 sm:grid-cols-3 xl:w-[420px] xl:grid-cols-1">
-            {stats.map((stat) => (
-              <div key={stat.label} className={`${studioInsetCardClass} min-w-0 p-4`}>
-                <p className="type-label text-white/42">{stat.label}</p>
-                <p className="mt-3 break-words text-sm leading-relaxed text-white/84">
-                  {stat.value}
-                </p>
-              </div>
-            ))}
-          </div>
+          {stats.length > 0 ? (
+            <div className="grid min-w-0 gap-3 sm:grid-cols-3 xl:w-[420px] xl:grid-cols-1">
+              {stats.map((stat) => (
+                <div key={stat.label} className={`${studioInsetCardClass} min-w-0 p-4`}>
+                  <p className="type-label text-white/42">{stat.label}</p>
+                  <p className="mt-3 break-words text-sm leading-relaxed text-white/84">
+                    {stat.value}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : null}
         </div>
       </div>
       {children}

@@ -18,6 +18,7 @@ backend/separated/
 backend/transcribed/
 backend/outputs/
 backend/mp3s/
+backend/.env.example
 
 # frontend / Next.js
 frontend/node_modules/

@@ -1,9 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Outlet, createFileRoute, useLocation } from "@tanstack/react-router";
 import { StudioShell } from "@/components/studio/StudioShell";
 import { requireUser } from "@/lib/auth";
 
 export const Route = createFileRoute("/studio")({
-  beforeLoad: async () => {
+  beforeLoad: async ({ location }) => {
+    if (location.pathname === "/studio/demo") {
+      return;
+    }
+
     await requireUser();
   },
   head: () => ({
@@ -20,5 +24,11 @@ export const Route = createFileRoute("/studio")({
 });
 
 function StudioRoute() {
-  return <StudioShell />;
+  const { pathname } = useLocation();
+
+  if (pathname === "/studio") {
+    return <StudioShell />;
+  }
+
+  return <Outlet />;
 }
