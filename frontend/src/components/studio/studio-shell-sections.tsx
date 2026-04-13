@@ -23,13 +23,53 @@ type StudioUploadPanelProps = {
   phase: UploadPhase;
   statusMessage: string;
   errorMessage: string;
+  progressState: {
+    jobId: string;
+    status: string;
+    progress: number;
+    message: string;
+  } | null;
+  controls: {
+    bpm: string;
+    tuning: string;
+    capo: string;
+    mode: string;
+    timeSignature: string;
+  };
+  onControlChange: (
+    key: "bpm" | "tuning" | "capo" | "mode" | "timeSignature",
+    value: string,
+  ) => void;
   onChooseFile: () => void;
+};
+
+type BackendArtifact = {
+  artifact_id: string;
+  filename: string;
+  content_type: string;
+  download_url: string;
+};
+
+type BackendResult = {
+  source_filename: string;
+  note_count: number;
+  bpm: number;
+  tuning: string;
+  capo: number;
+  mode: string;
+  time_signature: string;
+  artifacts: {
+    midi: BackendArtifact | null;
+    gp5: BackendArtifact | null;
+  };
 };
 
 type StudioRightRailProps = {
   phase: UploadPhase;
   lastUploadedFile: string | null;
   recentUploads: string[];
+  backendResult: BackendResult | null;
+  apiBaseUrl: string;
 };
 
 function SignalCard({
@@ -66,10 +106,12 @@ function UploadStatusCard({
   phase,
   statusMessage,
   errorMessage,
+  progressState,
 }: {
   phase: UploadPhase;
   statusMessage: string;
   errorMessage: string;
+  progressState: StudioUploadPanelProps["progressState"];
 }) {
   const isActive = phase === "uploading" || phase === "processing";
 
@@ -100,6 +142,20 @@ function UploadStatusCard({
           <p className="mt-2 max-w-xl text-base leading-relaxed text-white/60">
             {errorMessage || statusMessage}
           </p>
+          {progressState ? (
+            <div className="mt-4 max-w-xl">
+              <div className="flex items-center justify-between gap-3 text-xs uppercase tracking-[0.18em] text-white/40">
+                <span>{progressState.status.replaceAll("_", " ")}</span>
+                <span>{progressState.progress}%</span>
+              </div>
+              <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/8">
+                <div
+                  className="h-full rounded-full bg-[var(--color-accent)] transition-[width] duration-500 ease-out"
+                  style={{ width: `${progressState.progress}%` }}
+                />
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
     </div>
@@ -112,16 +168,17 @@ function StudioScopeCards() {
       <div className={`${studioInsetCardClass} min-w-0 p-5`}>
         <p className="type-label text-white/42">Current scope</p>
         <p className="mt-4 text-base leading-relaxed text-white/64">
-          Audio upload is real. Results, tab rendering, and player behavior are
-          high-fidelity UI states designed to carry the MVP visually.
+          Audio upload now hits the real transcription backend. The review
+          workspace and player flow remain demo-first while the pipeline is
+          being proven.
         </p>
       </div>
       <div className={`${studioInsetCardClass} min-w-0 p-5`}>
         <p className="type-label text-white/42">Next layer</p>
         <ul className="mt-4 space-y-3 text-base text-white/64">
-          <li>Browser-side player mount</li>
+          <li>Custom browser-side GP5 player</li>
           <li>Measure sync and loop points</li>
-          <li>Direct Guitar Pro import</li>
+          <li>Direct review from backend output</li>
         </ul>
       </div>
     </div>
@@ -159,6 +216,9 @@ export function StudioUploadPanel({
   phase,
   statusMessage,
   errorMessage,
+  progressState,
+  controls,
+  onControlChange,
   onChooseFile,
 }: StudioUploadPanelProps) {
   return (
@@ -192,14 +252,15 @@ export function StudioUploadPanel({
         </div>
 
         <div className={`${studioInsetCardClass} mt-8 min-w-0 p-6`}>
-          <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
+          <div className="grid min-w-0 gap-6 min-[1700px]:grid-cols-[minmax(0,1.2fr)_minmax(240px,0.8fr)]">
             <div className="min-w-0">
               <h3 className="max-w-md text-[2rem] leading-[1.06] tracking-[-0.05em] text-white">
                 Drop WAV, MP3, or memo audio
               </h3>
               <p className="mt-5 max-w-lg text-lg leading-relaxed text-white/60">
-                The backend confirms receipt. Plexus then stages a mock analysis
-                path into the demo workspace so the next step feels immediate.
+                Plexus sends the file through the real backend pipeline, then
+                keeps the review experience inside the demo shell while the
+                custom player is still being built.
               </p>
 
               <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -212,9 +273,81 @@ export function StudioUploadPanel({
                   </span>
                 ))}
               </div>
+
+              <div className="mt-6 grid gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-2 min-[1350px]:grid-cols-3 min-[1680px]:grid-cols-5">
+                <label className="flex min-w-0 flex-col gap-2">
+                  <span className="type-label text-white/42">Mode</span>
+                  <select
+                    className="h-11 rounded-[12px] border border-white/10 bg-black/30 px-3 text-sm text-white outline-none"
+                    value={controls.mode}
+                    onChange={(event) =>
+                      onControlChange("mode", event.target.value)
+                    }
+                  >
+                    <option value="riff">Riff</option>
+                    <option value="lead">Lead</option>
+                    <option value="rhythm">Rhythm</option>
+                  </select>
+                </label>
+
+                <label className="flex min-w-0 flex-col gap-2">
+                  <span className="type-label text-white/42">Tuning</span>
+                  <select
+                    className="h-11 rounded-[12px] border border-white/10 bg-black/30 px-3 text-sm text-white outline-none"
+                    value={controls.tuning}
+                    onChange={(event) =>
+                      onControlChange("tuning", event.target.value)
+                    }
+                  >
+                    <option value="standard">Standard</option>
+                    <option value="drop_d">Drop D</option>
+                    <option value="half_step_down">Half-step down</option>
+                  </select>
+                </label>
+
+                <label className="flex min-w-0 flex-col gap-2">
+                  <span className="type-label text-white/42">BPM</span>
+                  <input
+                    className="h-11 rounded-[12px] border border-white/10 bg-black/30 px-3 text-sm text-white outline-none placeholder:text-white/28"
+                    inputMode="numeric"
+                    placeholder="Auto"
+                    value={controls.bpm}
+                    onChange={(event) =>
+                      onControlChange("bpm", event.target.value)
+                    }
+                  />
+                </label>
+
+                <label className="flex min-w-0 flex-col gap-2">
+                  <span className="type-label text-white/42">Capo</span>
+                  <input
+                    className="h-11 rounded-[12px] border border-white/10 bg-black/30 px-3 text-sm text-white outline-none"
+                    inputMode="numeric"
+                    value={controls.capo}
+                    onChange={(event) =>
+                      onControlChange("capo", event.target.value)
+                    }
+                  />
+                </label>
+
+                <label className="flex min-w-0 flex-col gap-2">
+                  <span className="type-label text-white/42">Time</span>
+                  <select
+                    className="h-11 rounded-[12px] border border-white/10 bg-black/30 px-3 text-sm text-white outline-none"
+                    value={controls.timeSignature}
+                    onChange={(event) =>
+                      onControlChange("timeSignature", event.target.value)
+                    }
+                  >
+                    <option value="4/4">4/4</option>
+                    <option value="3/4">3/4</option>
+                    <option value="6/8">6/8</option>
+                  </select>
+                </label>
+              </div>
             </div>
 
-            <div className="flex min-w-0 flex-col justify-between border-t border-white/8 pt-6 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
+            <div className="flex min-w-0 flex-col gap-6 border-t border-white/8 pt-6 min-[1700px]:border-l min-[1700px]:border-t-0 min-[1700px]:pl-8 min-[1700px]:pt-0">
               <div className="min-w-0">
                 <p className="type-label text-white/42">Upload action</p>
                 <Button
@@ -228,8 +361,8 @@ export function StudioUploadPanel({
                 </Button>
               </div>
 
-              <p className="mt-5 text-base leading-relaxed text-white/46">
-                Demo handoff only. No local processing yet.
+              <p className="text-base leading-relaxed text-white/46">
+                Real backend pipeline. Demo review shell.
               </p>
             </div>
           </div>
@@ -240,6 +373,7 @@ export function StudioUploadPanel({
         phase={phase}
         statusMessage={statusMessage}
         errorMessage={errorMessage}
+        progressState={progressState}
       />
 
       <StudioScopeCards />
@@ -251,6 +385,8 @@ export function StudioRightRail({
   phase,
   lastUploadedFile,
   recentUploads,
+  backendResult,
+  apiBaseUrl,
 }: StudioRightRailProps) {
   const handoffTitle =
     phase === "ready" ? lastUploadedFile ?? demoSession.title : demoSession.title;
@@ -287,6 +423,62 @@ export function StudioRightRail({
             </div>
           );
         })}
+      </div>
+
+      <div className={`${studioInsetCardClass} mt-6 p-5`}>
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <p className="type-label text-white/42">Latest backend result</p>
+            <p className="mt-4 text-base leading-relaxed text-white/60">
+              {backendResult
+                ? `${backendResult.note_count} playable notes in ${backendResult.mode} mode at ${Math.round(
+                    backendResult.bpm,
+                  )} BPM. ${backendResult.tuning} tuning${backendResult.capo ? ` with capo ${backendResult.capo}` : ""}.`
+                : "Upload a file to verify the real backend response without leaving the demo shell."}
+            </p>
+          </div>
+          <Gauge className="mt-0.5 size-5 shrink-0 text-white/44" />
+        </div>
+
+        {backendResult ? (
+          <div className="mt-5 space-y-3">
+            {backendResult.artifacts.midi ? (
+              <Button
+                asChild
+                variant="subtle"
+                size="lg"
+                className="w-full justify-between hover:translate-y-0"
+              >
+                <a
+                  href={`${apiBaseUrl}${backendResult.artifacts.midi.download_url}`}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  Download MIDI
+                  <ArrowRight className="ml-2 size-4" />
+                </a>
+              </Button>
+            ) : null}
+
+            {backendResult.artifacts.gp5 ? (
+              <Button
+                asChild
+                variant="subtle"
+                size="lg"
+                className="w-full justify-between hover:translate-y-0"
+              >
+                <a
+                  href={`${apiBaseUrl}${backendResult.artifacts.gp5.download_url}`}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  Download GP5
+                  <ArrowRight className="ml-2 size-4" />
+                </a>
+              </Button>
+            ) : null}
+          </div>
+        ) : null}
       </div>
 
       <div className={`${studioInsetCardClass} mt-6 p-5`}>

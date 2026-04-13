@@ -24,6 +24,7 @@ type StudioTopBarProps = {
   secondaryAction?: ReactNode;
   backHref?: string;
   backLabel?: string;
+  showAuthControls?: boolean;
 };
 
 type StudioSurfaceProps = {
@@ -57,6 +58,7 @@ export function StudioTopBar({
   secondaryAction,
   backHref,
   backLabel,
+  showAuthControls = true,
 }: StudioTopBarProps) {
   return (
     <header className="mx-auto mb-8 flex w-full max-w-7xl flex-col gap-5 lg:px-10 lg:flex-row lg:items-center lg:justify-between">
@@ -90,7 +92,7 @@ export function StudioTopBar({
         className="flex flex-col gap-3 sm:flex-row sm:items-center"
       >
         {secondaryAction}
-        <StudioAuthControls />
+        {showAuthControls ? <StudioAuthControls /> : null}
       </AnimatedGroup>
     </header>
   );

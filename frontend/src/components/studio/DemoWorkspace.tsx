@@ -14,7 +14,11 @@ import {
 export function DemoWorkspace() {
   return (
     <StudioPageFrame>
-      <StudioTopBar backHref="/studio" backLabel="Back to studio" />
+      <StudioTopBar
+        backHref="/studio"
+        backLabel="Back to studio"
+        showAuthControls={false}
+      />
 
       <StudioSurface
         eyebrow="Demo workspace"
