@@ -22,6 +22,7 @@ class ArtifactResponse(BaseModel):
 class TranscriptionArtifactsResponse(BaseModel):
     midi: ArtifactResponse | None = None
     gp5: ArtifactResponse | None = None
+    stem: ArtifactResponse | None = None
 
 
 class TranscriptionResponse(BaseModel):
@@ -32,6 +33,7 @@ class TranscriptionResponse(BaseModel):
     tuning: str
     capo: int
     mode: str
+    stem_mode: str = "none"
     time_signature: str
     note_count: int
     note_preview_count: int

@@ -18,6 +18,9 @@ class InferenceProvider(ABC):
     def transcribe_guitar(self, guitar_stem_path: Path) -> dict[str, Any]:
         raise NotImplementedError
 
+    def create_preview_stem(self, guitar_stem_path: Path, workspace: Path) -> Path:
+        return create_preview_guitar_stem(guitar_stem_path, workspace)
+
 
 class LocalInferenceProvider(InferenceProvider):
     def isolate_guitar(self, source_path: Path, workspace: Path) -> Path:
@@ -28,10 +31,11 @@ class LocalInferenceProvider(InferenceProvider):
             model_name=settings.demucs_model,
             run_name="guitar",
         )
-        refined_primary = _refine_guitar_stem(primary_stem, workspace)
+        if settings.guitar_stem_strategy == "direct":
+            return primary_stem
 
-        if settings.guitar_stem_strategy != "hybrid_other":
-            return refined_primary
+        if settings.guitar_stem_strategy == "filtered":
+            return _refine_guitar_stem(primary_stem, workspace)
 
         try:
             other_stem = _run_demucs_two_stem(
@@ -42,9 +46,9 @@ class LocalInferenceProvider(InferenceProvider):
                 run_name="other_recovery",
             )
         except Exception:
-            return refined_primary
+            return primary_stem
 
-        return _blend_recovered_harmonics(refined_primary, other_stem, workspace)
+        return _blend_recovered_harmonics(primary_stem, other_stem, workspace)
 
     def transcribe_guitar(self, guitar_stem_path: Path) -> dict[str, Any]:
         try:
@@ -95,7 +99,9 @@ class ModalInferenceProvider(InferenceProvider):
         stem_bytes = separate_guitar_stem.remote(source_bytes, source_path.name)
         stem_path = workspace / "guitar.wav"
         stem_path.write_bytes(stem_bytes)
-        return _refine_guitar_stem(stem_path, workspace)
+        if settings.guitar_stem_strategy == "filtered":
+            return _refine_guitar_stem(stem_path, workspace)
+        return stem_path
 
     def transcribe_guitar(self, guitar_stem_path: Path) -> dict[str, Any]:
         try:
@@ -311,3 +317,64 @@ def _blend_recovered_harmonics(
         return primary_stem_path
 
     return blended_path
+
+
+def create_preview_guitar_stem(guitar_stem_path: Path, workspace: Path) -> Path:
+    try:
+        import librosa
+        import numpy as np
+        import soundfile as sf
+        from scipy.signal import butter, sosfiltfilt
+    except ImportError:
+        return guitar_stem_path
+
+    try:
+        audio, sample_rate = librosa.load(str(guitar_stem_path), sr=None, mono=False)
+    except Exception:
+        return guitar_stem_path
+
+    if sample_rate <= 0:
+        return guitar_stem_path
+
+    if getattr(audio, "ndim", 1) == 1:
+        channels = [audio]
+    else:
+        channels = [audio[index] for index in range(audio.shape[0])]
+
+    preview_channels: list[Any] = []
+    highpass = butter(2, 45.0, btype="highpass", fs=sample_rate, output="sos")
+    lowpass_cutoff = min(7000.0, (sample_rate / 2.0) - 100.0)
+    lowpass = butter(2, lowpass_cutoff, btype="lowpass", fs=sample_rate, output="sos")
+
+    for channel in channels:
+        try:
+            harmonic, percussive = librosa.effects.hpss(channel, margin=(1.0, 1.8))
+            filtered = sosfiltfilt(highpass, channel)
+            filtered = sosfiltfilt(lowpass, filtered)
+        except Exception:
+            return guitar_stem_path
+
+        # Keep the raw stem dominant, and only lightly smooth Demucs artifacts.
+        preview = (filtered * 0.72) + (harmonic * 0.2) + (percussive * 0.08)
+        noise_floor = float(np.percentile(np.abs(preview), 12)) if preview.size else 0.0
+        if noise_floor > 0:
+            mask = np.abs(preview) < (noise_floor * 0.7)
+            preview = np.where(mask, preview * 0.6, preview)
+
+        peak = float(np.max(np.abs(preview))) if preview.size else 0.0
+        if peak > 0:
+            preview = preview / peak * 0.95
+        preview_channels.append(preview.astype(np.float32, copy=False))
+
+    preview_audio = (
+        preview_channels[0]
+        if len(preview_channels) == 1
+        else np.vstack(preview_channels).T
+    )
+    preview_path = workspace / f"{guitar_stem_path.stem}_preview.wav"
+    try:
+        sf.write(str(preview_path), preview_audio, sample_rate)
+    except Exception:
+        return guitar_stem_path
+
+    return preview_path

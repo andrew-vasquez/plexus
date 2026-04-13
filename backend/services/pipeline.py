@@ -86,6 +86,92 @@ def _build_artifact_payload(
     }
 
 
+def _build_requested_stem_artifact(
+    *,
+    job_id: str,
+    stem_mode: str,
+    source_path: Path,
+    source_stem: str,
+    guitar_stem_path: Path,
+    workspace: Path,
+) -> dict[str, str] | None:
+    if stem_mode == "none":
+        return None
+
+    if stem_mode == "guitar_only":
+        return _build_artifact_payload(
+            job_id,
+            f"{source_stem}_guitar_only",
+            ".wav",
+            guitar_stem_path.read_bytes(),
+        )
+
+    if stem_mode != "no_guitar":
+        raise HTTPException(status_code=400, detail="Unsupported stem separation mode")
+
+    try:
+        import librosa
+        import numpy as np
+        import soundfile as sf
+    except ImportError as exc:
+        raise HTTPException(
+            status_code=500,
+            detail="Stem separation dependencies are not installed",
+        ) from exc
+
+    try:
+        source_audio, sample_rate = librosa.load(str(source_path), sr=None, mono=False)
+        guitar_audio, _ = librosa.load(
+            str(guitar_stem_path), sr=sample_rate, mono=False
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to load audio for no-guitar export: {exc}",
+        ) from exc
+
+    if getattr(source_audio, "ndim", 1) == 1:
+        source_audio = np.expand_dims(source_audio, axis=0)
+    if getattr(guitar_audio, "ndim", 1) == 1:
+        guitar_audio = np.expand_dims(guitar_audio, axis=0)
+
+    if source_audio.shape[0] != guitar_audio.shape[0]:
+        if source_audio.shape[0] == 1:
+            source_audio = np.repeat(source_audio, guitar_audio.shape[0], axis=0)
+        elif guitar_audio.shape[0] == 1:
+            guitar_audio = np.repeat(guitar_audio, source_audio.shape[0], axis=0)
+        else:
+            min_channels = min(source_audio.shape[0], guitar_audio.shape[0])
+            source_audio = source_audio[:min_channels]
+            guitar_audio = guitar_audio[:min_channels]
+
+    min_samples = min(source_audio.shape[-1], guitar_audio.shape[-1])
+    residual = source_audio[..., :min_samples] - guitar_audio[..., :min_samples]
+    peak = float(np.max(np.abs(residual))) if residual.size else 0.0
+    if peak > 0:
+        residual = residual / peak * 0.95
+
+    residual_path = workspace / f"{source_stem}_no_guitar.wav"
+    output_audio = residual[0] if residual.shape[0] == 1 else residual.T
+
+    try:
+        sf.write(
+            str(residual_path), output_audio.astype(np.float32, copy=False), sample_rate
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to write no-guitar export: {exc}",
+        ) from exc
+
+    return _build_artifact_payload(
+        job_id,
+        f"{source_stem}_no_guitar",
+        ".wav",
+        residual_path.read_bytes(),
+    )
+
+
 ProgressCallback = Callable[[str, int, str], None]
 
 
@@ -115,6 +201,7 @@ def run_transcription_pipeline_payload(
     content_type: str,
     options: TranscriptionOptions,
     include_gp5: bool = True,
+    stem_mode: str = "none",
     *,
     job_id: str | None = None,
     progress_callback: ProgressCallback | None = None,
@@ -164,6 +251,18 @@ def run_transcription_pipeline_payload(
         )
 
     source_stem = Path(filename).stem
+    stem_artifact = None
+    if stem_mode != "none":
+        progress("separating", 82, "Preparing stem separation export")
+        stem_artifact = _build_requested_stem_artifact(
+            job_id=resolved_job_id,
+            stem_mode=stem_mode,
+            source_path=source_path,
+            source_stem=source_stem,
+            guitar_stem_path=guitar_stem_path,
+            workspace=workspace,
+        )
+
     progress("exporting", 88, "Exporting MIDI and Guitar Pro artifacts")
     midi_path = write_midi_from_note_events(
         tabbed_note_events,
@@ -174,6 +273,7 @@ def run_transcription_pipeline_payload(
             resolved_job_id, source_stem, ".mid", midi_path.read_bytes()
         ),
         "gp5": None,
+        "stem": stem_artifact,
     }
 
     if include_gp5:
@@ -207,6 +307,7 @@ def run_transcription_pipeline_payload(
         "tuning": options.tuning,
         "capo": options.capo,
         "mode": options.mode,
+        "stem_mode": stem_mode,
         "time_signature": options.time_signature,
         "note_count": note_count,
         "note_events": note_preview(tabbed_note_events),

@@ -26,6 +26,7 @@ def _map_transcription_response(payload: dict[str, object]) -> TranscriptionResp
     artifacts = payload["artifacts"]
     midi_artifact = ArtifactResponse(**artifacts["midi"]) if artifacts["midi"] else None
     gp5_artifact = ArtifactResponse(**artifacts["gp5"]) if artifacts["gp5"] else None
+    stem_artifact = ArtifactResponse(**artifacts["stem"]) if artifacts["stem"] else None
 
     return TranscriptionResponse(
         job_id=str(payload["job_id"]),
@@ -35,11 +36,16 @@ def _map_transcription_response(payload: dict[str, object]) -> TranscriptionResp
         tuning=str(payload["tuning"]),
         capo=int(payload["capo"]),
         mode=str(payload["mode"]),
+        stem_mode=str(payload.get("stem_mode", "none")),
         time_signature=str(payload["time_signature"]),
         note_count=int(payload["note_count"]),
         note_preview_count=len(payload["note_events"]),
         note_events=[NoteEventResponse(**note) for note in payload["note_events"]],
-        artifacts=TranscriptionArtifactsResponse(midi=midi_artifact, gp5=gp5_artifact),
+        artifacts=TranscriptionArtifactsResponse(
+            midi=midi_artifact,
+            gp5=gp5_artifact,
+            stem=stem_artifact,
+        ),
     )
 
 
@@ -51,6 +57,7 @@ def _run_job(
     content_type: str,
     options: TranscriptionOptions,
     include_gp5: bool,
+    stem_mode: str,
 ) -> None:
     try:
         result = run_transcription_pipeline_payload(
@@ -59,6 +66,7 @@ def _run_job(
             content_type=content_type,
             options=options,
             include_gp5=include_gp5,
+            stem_mode=stem_mode,
             job_id=job_id,
             progress_callback=lambda status, progress, message: job_store.update(
                 job_id,
@@ -128,6 +136,12 @@ def _build_transcription_options(
     )
 
 
+def _validate_stem_mode(stem_mode: str) -> str:
+    if stem_mode not in {"none", "guitar_only", "no_guitar"}:
+        raise HTTPException(status_code=400, detail="Unsupported stem separation mode")
+    return stem_mode
+
+
 @router.post("/transcribe", response_model=TranscriptionJobQueuedResponse)
 async def transcribe(
     background_tasks: BackgroundTasks,
@@ -137,8 +151,10 @@ async def transcribe(
     capo: int = Form(0),
     mode: str = Form("riff"),
     time_signature: str = Form("4/4"),
+    stem_mode: str = Form("none"),
 ) -> TranscriptionJobQueuedResponse:
     options = _build_transcription_options(bpm, tuning, capo, mode, time_signature)
+    stem_mode = _validate_stem_mode(stem_mode)
     payload = await file.read()
     job = job_store.create(message="Upload received")
     background_tasks.add_task(
@@ -149,6 +165,7 @@ async def transcribe(
         content_type=file.content_type or "application/octet-stream",
         options=options,
         include_gp5=True,
+        stem_mode=stem_mode,
     )
     return TranscriptionJobQueuedResponse(
         job_id=job.job_id,
@@ -167,8 +184,10 @@ async def transcribe_midi(
     capo: int = Form(0),
     mode: str = Form("riff"),
     time_signature: str = Form("4/4"),
+    stem_mode: str = Form("none"),
 ) -> TranscriptionJobQueuedResponse:
     options = _build_transcription_options(bpm, tuning, capo, mode, time_signature)
+    stem_mode = _validate_stem_mode(stem_mode)
     payload = await file.read()
     job = job_store.create(message="Upload received")
     background_tasks.add_task(
@@ -179,6 +198,7 @@ async def transcribe_midi(
         content_type=file.content_type or "application/octet-stream",
         options=options,
         include_gp5=False,
+        stem_mode=stem_mode,
     )
     return TranscriptionJobQueuedResponse(
         job_id=job.job_id,

@@ -1,15 +1,15 @@
-import { Link } from "@tanstack/react-router";
 import {
   ArrowRight,
   CheckCircle2,
   Clock3,
-  Gauge,
+  FileMusic,
   LoaderCircle,
+  Music2,
   Upload,
   Waves,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { demoSession, studioSignals, type UploadPhase } from "@/lib/demo-data";
+import { type UploadPhase } from "@/lib/demo-data";
 import {
   studioInsetCardClass,
   studioRailClass,
@@ -35,9 +35,10 @@ type StudioUploadPanelProps = {
     capo: string;
     mode: string;
     timeSignature: string;
+    stemMode: "none" | "guitar_only" | "no_guitar";
   };
   onControlChange: (
-    key: "bpm" | "tuning" | "capo" | "mode" | "timeSignature",
+    key: "bpm" | "tuning" | "capo" | "mode" | "timeSignature" | "stemMode",
     value: string,
   ) => void;
   onChooseFile: () => void;
@@ -57,10 +58,12 @@ type BackendResult = {
   tuning: string;
   capo: number;
   mode: string;
+  stem_mode: "none" | "guitar_only" | "no_guitar";
   time_signature: string;
   artifacts: {
     midi: BackendArtifact | null;
     gp5: BackendArtifact | null;
+    stem: BackendArtifact | null;
   };
 };
 
@@ -166,19 +169,19 @@ function StudioScopeCards() {
   return (
     <div className="grid gap-4 lg:grid-cols-2">
       <div className={`${studioInsetCardClass} min-w-0 p-5`}>
-        <p className="type-label text-white/42">Current scope</p>
+        <p className="type-label text-white/42">What you get back</p>
         <p className="mt-4 text-base leading-relaxed text-white/64">
-          Audio upload now hits the real transcription backend. The review
-          workspace and player flow remain demo-first while the pipeline is
-          being proven.
+          Every run can return MIDI and GP5 exports, plus an optional stem
+          separation download when you need either the isolated guitar or the
+          backing without guitar.
         </p>
       </div>
       <div className={`${studioInsetCardClass} min-w-0 p-5`}>
-        <p className="type-label text-white/42">Next layer</p>
+        <p className="type-label text-white/42">Best results</p>
         <ul className="mt-4 space-y-3 text-base text-white/64">
-          <li>Custom browser-side GP5 player</li>
-          <li>Measure sync and loop points</li>
-          <li>Direct review from backend output</li>
+          <li>Use a clean single-guitar take when possible</li>
+          <li>Set tuning and mode before uploading</li>
+          <li>Use stem split only when you need an extra download</li>
         </ul>
       </div>
     </div>
@@ -189,12 +192,13 @@ export function StudioLeftRail({ phaseSteps }: StudioLeftRailProps) {
   return (
     <aside className={`${studioRailClass} h-full min-w-0 p-5`}>
       <div className={`${studioInsetCardClass} p-5`}>
-        <p className="type-label text-white/42">Pinned session</p>
+        <p className="type-label text-white/42">Workflow</p>
         <p className="mt-4 text-[1.9rem] leading-[0.95] tracking-[-0.06em] text-white sm:text-[2rem]">
-          {demoSession.title}
+          Track the upload from intake to export.
         </p>
         <p className="mt-3 text-base leading-relaxed text-white/60">
-          {demoSession.detectedTempo} • {demoSession.tuning} • review-ready
+          The left rail stays focused on job progress so the center column can
+          stay dedicated to the file, settings, and results.
         </p>
       </div>
 
@@ -258,9 +262,9 @@ export function StudioUploadPanel({
                 Drop WAV, MP3, or memo audio
               </h3>
               <p className="mt-5 max-w-lg text-lg leading-relaxed text-white/60">
-                Plexus sends the file through the real backend pipeline, then
-                keeps the review experience inside the demo shell while the
-                custom player is still being built.
+                Plexus runs the upload through the transcription pipeline and
+                can also return a stem split from the same pass so you can
+                download everything from one place.
               </p>
 
               <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -274,7 +278,7 @@ export function StudioUploadPanel({
                 ))}
               </div>
 
-              <div className="mt-6 grid gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-2 min-[1350px]:grid-cols-3 min-[1680px]:grid-cols-5">
+              <div className="mt-6 grid gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-2 min-[1350px]:grid-cols-3 min-[1680px]:grid-cols-6">
                 <label className="flex min-w-0 flex-col gap-2">
                   <span className="type-label text-white/42">Mode</span>
                   <select
@@ -344,6 +348,21 @@ export function StudioUploadPanel({
                     <option value="6/8">6/8</option>
                   </select>
                 </label>
+
+                <label className="flex min-w-0 flex-col gap-2">
+                  <span className="type-label text-white/42">Stem split</span>
+                  <select
+                    className="h-11 rounded-[12px] border border-white/10 bg-black/30 px-3 text-sm text-white outline-none"
+                    value={controls.stemMode}
+                    onChange={(event) =>
+                      onControlChange("stemMode", event.target.value)
+                    }
+                  >
+                    <option value="none">None</option>
+                    <option value="guitar_only">Guitar only</option>
+                    <option value="no_guitar">No guitar</option>
+                  </select>
+                </label>
               </div>
             </div>
 
@@ -362,7 +381,8 @@ export function StudioUploadPanel({
               </div>
 
               <p className="text-base leading-relaxed text-white/46">
-                Real backend pipeline. Demo review shell.
+                Real backend pipeline. Optional stem export bundled into the
+                same run.
               </p>
             </div>
           </div>
@@ -388,41 +408,57 @@ export function StudioRightRail({
   backendResult,
   apiBaseUrl,
 }: StudioRightRailProps) {
-  const handoffTitle =
-    phase === "ready" ? lastUploadedFile ?? demoSession.title : demoSession.title;
+  const currentTitle = lastUploadedFile ?? "No upload yet";
 
   return (
     <aside className={`${studioRailClass} h-full min-w-0 p-5`}>
-      <p className="type-label text-white/42">Demo workspace handoff</p>
+      <p className="type-label text-white/42">Workspace output</p>
       <h2 className="mt-4 break-words text-[2.1rem] tracking-[-0.06em] text-white">
-        {handoffTitle}
+        {currentTitle}
       </h2>
       <p className="mt-4 text-base leading-relaxed text-white/60">
-        The right rail stays focused on where the uploaded take is headed next,
-        instead of duplicating the whole studio again.
+        Downloads and the latest backend summary stay here so the main workspace
+        can focus on the upload flow.
       </p>
 
       <div className="mt-6 space-y-4">
-        {studioSignals.map((signal) => {
-          const Icon = signal.icon;
-          return (
-            <div key={signal.label} className={`${studioInsetCardClass} p-5`}>
-              <div className="flex items-start gap-4">
-                <div className="rounded-[14px] border border-white/8 bg-white/[0.03] p-3">
-                  <Icon className="size-5 text-white/82" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-xl tracking-[-0.03em] text-white">
-                    {signal.label}
-                  </p>
-                  <p className="mt-2 break-words text-base leading-relaxed text-white/60">
-                    {signal.value}
-                  </p>
-                </div>
-              </div>
+        <div className={`${studioInsetCardClass} p-5`}>
+          <div className="flex items-start gap-4">
+            <div className="rounded-[14px] border border-white/8 bg-white/[0.03] p-3">
+              <Music2 className="size-5 text-white/82" />
             </div>
-          );
-        })}
+            <div className="min-w-0">
+              <p className="text-xl tracking-[-0.03em] text-white">Upload status</p>
+              <p className="mt-2 break-words text-base leading-relaxed text-white/60">
+                {phase === "idle"
+                  ? "Waiting for a file."
+                  : phase === "ready"
+                    ? "Exports are ready to download."
+                    : phase === "error"
+                      ? "The latest run needs another try."
+                      : "The backend is working through your file."}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className={`${studioInsetCardClass} p-5`}>
+          <div className="flex items-start gap-4">
+            <div className="rounded-[14px] border border-white/8 bg-white/[0.03] p-3">
+              <FileMusic className="size-5 text-white/82" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xl tracking-[-0.03em] text-white">Export set</p>
+              <p className="mt-2 break-words text-base leading-relaxed text-white/60">
+                {backendResult
+                  ? backendResult.artifacts.stem
+                    ? "MIDI, GP5, and stem separation are ready in one batch."
+                    : "MIDI and GP5 are ready from the latest upload."
+                  : "Once processing finishes, your downloadable files show up here."}
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className={`${studioInsetCardClass} mt-6 p-5`}>
@@ -433,11 +469,14 @@ export function StudioRightRail({
               {backendResult
                 ? `${backendResult.note_count} playable notes in ${backendResult.mode} mode at ${Math.round(
                     backendResult.bpm,
-                  )} BPM. ${backendResult.tuning} tuning${backendResult.capo ? ` with capo ${backendResult.capo}` : ""}.`
+                  )} BPM. ${backendResult.tuning} tuning${backendResult.capo ? ` with capo ${backendResult.capo}` : ""}.${
+                    backendResult.artifacts.stem
+                      ? ` ${backendResult.stem_mode === "guitar_only" ? "Guitar-only" : "No-guitar"} stem export is ready.`
+                      : ""
+                  }`
                 : "Upload a file to verify the real backend response without leaving the demo shell."}
             </p>
           </div>
-          <Gauge className="mt-0.5 size-5 shrink-0 text-white/44" />
         </div>
 
         {backendResult ? (
@@ -477,72 +516,60 @@ export function StudioRightRail({
                 </a>
               </Button>
             ) : null}
+
+            {backendResult.artifacts.stem ? (
+              <Button
+                asChild
+                variant="subtle"
+                size="lg"
+                className="w-full justify-between hover:translate-y-0"
+              >
+                <a
+                  href={`${apiBaseUrl}${backendResult.artifacts.stem.download_url}`}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  Download {backendResult.stem_mode === "guitar_only" ? "guitar-only" : "no-guitar"} stem
+                  <ArrowRight className="ml-2 size-4" />
+                </a>
+              </Button>
+            ) : null}
           </div>
         ) : null}
       </div>
 
       <div className={`${studioInsetCardClass} mt-6 p-5`}>
-        <p className="type-label text-white/42">Preview sections</p>
-        <div className="mt-5 space-y-4">
-          {demoSession.sections.map((section) => (
-            <div
-              key={section.name}
-              className="flex items-start justify-between gap-4 text-base text-white/78"
-            >
-              <div className="min-w-0">
-                <p className="text-lg text-white">{section.name}</p>
-                <p className="mt-1 text-sm leading-relaxed text-white/46">
-                  {section.note}
-                </p>
-              </div>
-              <span className="type-label shrink-0 text-white/38">
-                {section.measures}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className={`${studioInsetCardClass} mt-6 p-5`}>
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
-            <p className="type-label text-white/42">Recent signal</p>
+            <p className="type-label text-white/42">Recent uploads</p>
             <p className="mt-4 text-base leading-relaxed text-white/60">
-              The latest uploaded files stay visible here so the studio always
-              reads like a working product, not a static mockup.
+              Keep a quick view of the latest files sent through this workspace.
             </p>
           </div>
-          <Gauge className="mt-0.5 size-5 shrink-0 text-white/44" />
         </div>
 
-        <div className="mt-5 space-y-3">
-          {recentUploads.slice(0, 3).map((upload, index) => (
-            <div
-              key={upload}
-              className="rounded-[16px] border border-white/8 bg-white/[0.02] px-4 py-4 text-sm text-white/76 transition-[border-color,background-color,box-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-white/14 hover:bg-white/[0.03]"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <span className="min-w-0 break-words leading-relaxed">{upload}</span>
-                <span className="type-label shrink-0 text-white/32">
-                  {index === 0 ? "Latest" : "Queued"}
-                </span>
+        {recentUploads.length > 0 ? (
+          <div className="mt-5 space-y-3">
+            {recentUploads.slice(0, 3).map((upload, index) => (
+              <div
+                key={upload}
+                className="rounded-[16px] border border-white/8 bg-white/[0.02] px-4 py-4 text-sm text-white/76 transition-[border-color,background-color,box-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-white/14 hover:bg-white/[0.03]"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <span className="min-w-0 break-words leading-relaxed">{upload}</span>
+                  <span className="type-label shrink-0 text-white/32">
+                    {index === 0 ? "Latest" : "Earlier"}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-5 text-sm leading-relaxed text-white/42">
+            Nothing has been uploaded in this session yet.
+          </p>
+        )}
       </div>
-
-      <Button
-        asChild
-        variant="outline"
-        size="lg"
-        className="mt-6 w-full hover:translate-y-0"
-      >
-        <Link to="/studio/demo">
-          Open demo transcription
-          <ArrowRight className="ml-2 size-4" />
-        </Link>
-      </Button>
     </aside>
   );
 }

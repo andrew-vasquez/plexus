@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ActionLink } from "@/components/shared/ActionLink";
 import { type UploadPhase } from "@/lib/demo-data";
-import { apiBaseUrl, apiTargetLabel } from "@/lib/env";
+import { apiBaseUrl } from "@/lib/env";
 import {
   StudioLeftRail,
   StudioRightRail,
@@ -28,6 +28,7 @@ type TranscriptionResponse = {
   tuning: string;
   capo: number;
   mode: string;
+  stem_mode: "none" | "guitar_only" | "no_guitar";
   time_signature: string;
   note_count: number;
   note_preview_count: number;
@@ -42,6 +43,7 @@ type TranscriptionResponse = {
   artifacts: {
     midi: BackendArtifact | null;
     gp5: BackendArtifact | null;
+    stem: BackendArtifact | null;
   };
 };
 
@@ -74,6 +76,7 @@ type TranscriptionControls = {
   capo: string;
   mode: string;
   timeSignature: string;
+  stemMode: "none" | "guitar_only" | "no_guitar";
 };
 
 function sleep(ms: number) {
@@ -88,6 +91,7 @@ function mapStatusToPhase(status: string): UploadPhase {
   }
   if (
     status === "transcribing" ||
+    status === "separating" ||
     status === "post_processing" ||
     status === "exporting"
   ) {
@@ -121,11 +125,9 @@ export function StudioShell() {
     capo: "0",
     mode: "riff",
     timeSignature: "4/4",
+    stemMode: "none",
   });
-  const [recentUploads, setRecentUploads] = useState<string[]>([
-    "Velvet Lights - demo stem.wav",
-    "Bridge motif memo.mp3",
-  ]);
+  const [recentUploads, setRecentUploads] = useState<string[]>([]);
 
   const phaseSteps = useMemo(
     () => [
@@ -203,7 +205,11 @@ export function StudioShell() {
         setStatusMessage(
           `${result.note_count} playable notes mapped for ${result.tuning} at ${Math.round(
             result.bpm,
-          )} BPM. MIDI and GP5 artifacts are ready.`,
+          )} BPM. MIDI and GP5 artifacts are ready.${
+            result.artifacts.stem
+              ? ` ${result.stem_mode === "guitar_only" ? "Guitar-only" : "No-guitar"} stem is ready for download.`
+              : ""
+          }`,
         );
         setRecentUploads((previous) =>
           [result.source_filename, ...previous].slice(0, 4),
@@ -236,6 +242,7 @@ export function StudioShell() {
     formData.append("capo", controls.capo);
     formData.append("mode", controls.mode);
     formData.append("time_signature", controls.timeSignature);
+    formData.append("stem_mode", controls.stemMode);
 
     try {
       const response = await fetch(`${apiBaseUrl}/api/v1/transcribe`, {
@@ -304,20 +311,8 @@ export function StudioShell() {
 
       <StudioSurface
         eyebrow="Plexus studio"
-        title="Drop a take and move it into the tab workspace."
-        description="This MVP keeps the upload real, then hands you off into a designed review flow with clean status messaging and a ready-made demo transcription."
-        stats={[
-          { label: "API target", value: apiTargetLabel },
-          { label: "Upload mode", value: phase === "idle" ? "Ready" : phase },
-          {
-            label: "Artifacts",
-            value: backendResult ? "MIDI + GP5 ready" : "Waiting",
-          },
-          {
-            label: "Mode",
-            value: controls.mode,
-          },
-        ]}
+        title="Upload a take and get back the files you need."
+        description="Run transcription, export MIDI and GP5, and optionally split out a guitar-only or no-guitar stem from the same workspace."
       >
         <div className="mt-8 grid gap-6 xl:grid-cols-[260px_minmax(0,1fr)] min-[1800px]:grid-cols-[260px_minmax(0,1fr)_300px]">
           <StudioLeftRail phaseSteps={phaseSteps} />
