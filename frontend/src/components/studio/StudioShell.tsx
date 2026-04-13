@@ -115,6 +115,7 @@ export function StudioShell() {
   );
   const [errorMessage, setErrorMessage] = useState("");
   const [lastUploadedFile, setLastUploadedFile] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [backendResult, setBackendResult] = useState<TranscriptionResponse | null>(
     null,
   );
@@ -284,6 +285,14 @@ export function StudioShell() {
     }
   }
 
+  async function handleStartProcessing() {
+    if (!selectedFile || phase === "uploading" || phase === "processing") {
+      return;
+    }
+
+    await handleFile(selectedFile);
+  }
+
   return (
     <StudioPageFrame>
       <input
@@ -294,7 +303,13 @@ export function StudioShell() {
         onChange={(event) => {
           const file = event.target.files?.[0];
           if (file) {
-            void handleFile(file);
+            setSelectedFile(file);
+            setErrorMessage("");
+            setStatusMessage(`Selected ${file.name}. Review your settings, then start processing.`);
+            if (phase === "error" || phase === "ready") {
+              setPhase("idle");
+              setProgressState(null);
+            }
           }
 
           event.target.value = "";
@@ -325,7 +340,11 @@ export function StudioShell() {
             onControlChange={(key, value) => {
               setControls((current) => ({ ...current, [key]: value }));
             }}
+            selectedFileName={selectedFile?.name ?? null}
             onChooseFile={() => inputRef.current?.click()}
+            onStartProcessing={() => {
+              void handleStartProcessing();
+            }}
           />
           <div className="xl:col-span-2 min-[1800px]:col-span-1">
             <StudioRightRail

@@ -23,6 +23,7 @@ type StudioUploadPanelProps = {
   phase: UploadPhase;
   statusMessage: string;
   errorMessage: string;
+  selectedFileName: string | null;
   progressState: {
     jobId: string;
     status: string;
@@ -42,6 +43,7 @@ type StudioUploadPanelProps = {
     value: string,
   ) => void;
   onChooseFile: () => void;
+  onStartProcessing: () => void;
 };
 
 type BackendArtifact = {
@@ -220,11 +222,15 @@ export function StudioUploadPanel({
   phase,
   statusMessage,
   errorMessage,
+  selectedFileName,
   progressState,
   controls,
   onControlChange,
   onChooseFile,
+  onStartProcessing,
 }: StudioUploadPanelProps) {
+  const isProcessing = phase === "uploading" || phase === "processing";
+
   return (
     <section className="min-w-0 space-y-6">
       <div className={`${studioRailClass} min-w-0 p-6`}>
@@ -234,10 +240,10 @@ export function StudioUploadPanel({
             <h2 className="mt-4 max-w-lg text-4xl tracking-[-0.06em] text-white">
               Audio first. Review fast.
             </h2>
-            <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/62">
-              Bring in one clean take, let Plexus confirm the handoff, then step
-              directly into the structured review workspace.
-            </p>
+              <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/62">
+                Pick one clean take, confirm the settings you want, then start the
+                run when you are ready.
+              </p>
           </div>
 
           <div className={`${studioInsetCardClass} min-w-0 xl:w-[200px] p-5`}>
@@ -369,15 +375,41 @@ export function StudioUploadPanel({
             <div className="flex min-w-0 flex-col gap-6 border-t border-white/8 pt-6 min-[1700px]:border-l min-[1700px]:border-t-0 min-[1700px]:pl-8 min-[1700px]:pt-0">
               <div className="min-w-0">
                 <p className="type-label text-white/42">Upload action</p>
-                <Button
-                  type="button"
-                  size="lg"
-                  className="mt-4 w-full justify-center"
-                  onClick={onChooseFile}
-                >
-                  <Upload className="mr-2 size-4" />
-                  Choose audio file
-                </Button>
+                <div className="mt-4 space-y-3">
+                  <Button
+                    type="button"
+                    size="lg"
+                    variant="outline"
+                    className="w-full justify-center"
+                    onClick={onChooseFile}
+                    disabled={isProcessing}
+                  >
+                    <Upload className="mr-2 size-4" />
+                    {selectedFileName ? "Choose different file" : "Choose audio file"}
+                  </Button>
+
+                  <Button
+                    type="button"
+                    size="lg"
+                    className="w-full justify-center"
+                    onClick={onStartProcessing}
+                    disabled={!selectedFileName || isProcessing}
+                  >
+                    {isProcessing ? (
+                      <LoaderCircle className="mr-2 size-4 animate-spin" />
+                    ) : (
+                      <ArrowRight className="mr-2 size-4" />
+                    )}
+                    {isProcessing ? "Processing" : "Start processing"}
+                  </Button>
+                </div>
+
+                <div className="mt-4 rounded-[14px] border border-white/8 bg-white/[0.02] px-4 py-3 text-sm text-white/68">
+                  <p className="type-label text-white/38">Selected file</p>
+                  <p className="mt-2 break-words text-white/82">
+                    {selectedFileName ?? "No file selected yet."}
+                  </p>
+                </div>
               </div>
 
               <p className="text-base leading-relaxed text-white/46">
