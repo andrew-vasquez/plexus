@@ -6,7 +6,7 @@ export function SignalStrip() {
   return (
     <section className="border-y border-white/6 bg-black/20 py-16 md:py-24">
       <div className="group relative mx-auto max-w-6xl px-6 lg:px-10">
-        <div className="absolute inset-0 z-10 flex scale-95 items-center justify-center opacity-0 transition-all duration-500 group-hover:scale-100 group-hover:opacity-100">
+        <div className="absolute inset-0 z-10 flex scale-95 items-center justify-center opacity-0 transition-[translate,scale,opacity] duration-500 group-hover:scale-100 group-hover:opacity-100">
           <Link
             to="/studio"
             className="text-sm text-white/78 transition-opacity duration-150 hover:opacity-75"
@@ -15,7 +15,7 @@ export function SignalStrip() {
             <ChevronRight className="ml-1 inline-block size-3" />
           </Link>
         </div>
-        <div className="mx-auto grid max-w-4xl grid-cols-2 gap-4 transition-all duration-500 group-hover:opacity-45 md:grid-cols-4">
+        <div className="mx-auto grid max-w-4xl grid-cols-2 gap-4 transition-opacity duration-500 group-hover:opacity-45 md:grid-cols-4">
           {signalItems.map((item) => (
             <div
               key={item.label}

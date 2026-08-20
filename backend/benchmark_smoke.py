@@ -1,3 +1,14 @@
+"""Benchmark the Smoke on the Water transcription against a reference tab.
+
+Runs the full pipeline on an audio file, then compares the first few bars
+of the produced tab to a reference Guitar Pro file (note-for-note, on a
+16th-note grid). Prints and saves a ``benchmark_summary.json`` so you can
+see exactly how close the transcription is and where it goes wrong.
+
+Usage:
+    python benchmark_smoke.py --audio mp3s/smokeonthewater.mp3 --bars 8
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -5,22 +16,20 @@ import json
 import shutil
 from collections import Counter, defaultdict
 from pathlib import Path
-from typing import Any
+from typing import Any, Sequence
 
 import guitarpro
 
 from core.config import settings
+from services.audio.tempo import detect_bpm_from_stem
 from services.gp_export import TICKS_PER_BEAT, build_gp5
 from services.inference import get_inference_provider
-from services.note_processing import (
-    TranscriptionOptions,
-    assign_fretboard_positions,
-    clean_note_events,
-    detect_bpm_from_stem,
-    quantize_note_events,
-    resolve_tuning_map,
-    write_midi_from_note_events,
-)
+from services.notes.cleaning import clean_note_events
+from services.notes.fretboard import assign_fretboard_positions
+from services.notes.options import TranscriptionOptions, resolve_tuning_map
+from services.notes.quantization import quantize_note_events
+from services.notes.midi import write_midi_from_note_events
+from services.notes.types import NoteEvent
 
 
 def main() -> None:
@@ -56,6 +65,7 @@ def main() -> None:
     )
     tuning_map = resolve_tuning_map(options.tuning, options.capo)
 
+    # --- Run the same steps the API pipeline runs ---
     stem_path = provider.isolate_guitar(args.audio, workspace)
     transcription = provider.transcribe_guitar(stem_path)
     raw_note_events = transcription["note_events"]
@@ -80,6 +90,7 @@ def main() -> None:
         output_path=workspace / "smoke_benchmark.gp5",
     )
 
+    # --- Compare against the reference tab and report ---
     compared_transcription = _note_events_to_bar_window(
         final_note_events,
         bpm=bpm,
@@ -109,6 +120,7 @@ def main() -> None:
 
 
 def _prepare_workspace(strategy: str) -> Path:
+    """Return a fresh benchmark workspace, named after the stem strategy."""
     workspace = settings.work_dir / "benchmarks" / f"smoke_{strategy}"
     if workspace.exists():
         shutil.rmtree(workspace)
@@ -119,6 +131,7 @@ def _prepare_workspace(strategy: str) -> Path:
 def _reference_gp5_to_events(
     reference_gp5_path: Path, bars: int
 ) -> list[dict[str, Any]]:
+    """Extract note events from the reference GP5 (pitch + timing in beats)."""
     song = guitarpro.parse(str(reference_gp5_path))
     track = song.tracks[0]
     if not track.strings:
@@ -138,6 +151,8 @@ def _reference_gp5_to_events(
                     continue
 
                 start_tick = beat.start
+                if start_tick is None:
+                    continue
                 if start_tick >= cutoff_tick:
                     continue
 
@@ -161,12 +176,13 @@ def _reference_gp5_to_events(
 
 
 def _note_events_to_bar_window(
-    note_events: list[dict[str, float | int]],
+    note_events: Sequence[NoteEvent],
     bpm: float,
     numerator: int,
     denominator: int,
     bars: int,
 ) -> list[dict[str, Any]]:
+    """Convert transcription notes into the same beat-based format as the reference."""
     beats_per_bar = numerator * (4.0 / denominator)
     extracted: list[dict[str, Any]] = []
 
@@ -206,6 +222,7 @@ def _note_events_to_bar_window(
 
 
 def _measure_ticks(header: guitarpro.models.MeasureHeader) -> int:
+    """How many ticks one bar of the reference song lasts."""
     numerator = header.timeSignature.numerator
     denominator = header.timeSignature.denominator.value
     return int(numerator * TICKS_PER_BEAT * (4 / denominator))
@@ -225,6 +242,7 @@ def _build_summary(
     midi_path: Path,
     gp5_path: Path,
 ) -> dict[str, Any]:
+    """Score the transcription against the reference and summarize the results."""
     transcription_groups = _group_pitch_sets(transcription_notes)
     reference_groups = _group_pitch_sets(reference_notes)
     transcription_keys = set(transcription_groups)
@@ -281,6 +299,7 @@ def _build_summary(
 
 
 def _group_pitch_sets(note_events: list[dict[str, Any]]) -> dict[int, tuple[int, ...]]:
+    """Group simultaneous notes (chords) by their 16th-note onset step."""
     grouped: dict[int, set[int]] = defaultdict(set)
     for note in note_events:
         onset_step = int(round(float(note["start_beats"]) * 4))
@@ -291,12 +310,14 @@ def _group_pitch_sets(note_events: list[dict[str, Any]]) -> dict[int, tuple[int,
 def _top_pitch_sets(
     grouped_pitch_sets: dict[int, tuple[int, ...]],
 ) -> Counter[tuple[int, ...]]:
+    """Count how often each chord shape appears across the song."""
     return Counter(pitches for pitches in grouped_pitch_sets.values() if pitches)
 
 
 def _preview_onset_groups(
     grouped_pitch_sets: dict[int, tuple[int, ...]], limit: int
 ) -> list[dict[str, Any]]:
+    """Human-readable preview of the first onset groups (for debugging)."""
     preview: list[dict[str, Any]] = []
     for onset_step, pitches in list(grouped_pitch_sets.items())[:limit]:
         preview.append(

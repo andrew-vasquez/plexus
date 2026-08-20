@@ -12,6 +12,18 @@ Railway should build from the included `Dockerfile`.
 PLEXUS_ALLOWED_ORIGINS=https://your-frontend-domain.com
 ```
 
+If you deploy preview frontends on Vercel, you can optionally allow them with:
+
+```bash
+PLEXUS_ALLOWED_ORIGIN_REGEX=https://.*\.vercel\.app
+```
+
+Notes:
+
+- Do not include trailing slashes in `PLEXUS_ALLOWED_ORIGINS`
+- Multiple fixed origins can be comma-separated
+- Example: `PLEXUS_ALLOWED_ORIGINS=https://plexustabs.vercel.app,https://www.plexustabs.com`
+
 Optional overrides:
 
 ```bash

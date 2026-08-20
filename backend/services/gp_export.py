@@ -1,3 +1,14 @@
+"""Writes note events to a Guitar Pro (``.gp5``) file.
+
+The last step of the pipeline. Takes the cleaned, quantized, fret-mapped
+notes and lays them out as measures and beats in a Guitar Pro 5 file,
+so the result can be opened in Guitar Pro or AlphaTab.
+
+GP files measure time in "ticks" (960 per beat). This module converts
+between seconds and ticks using the song's BPM, and snaps every note to
+the closest standard note duration (whole → 32nd note).
+"""
+
 from __future__ import annotations
 
 import math
@@ -6,11 +17,17 @@ from pathlib import Path
 import guitarpro
 from guitarpro import models as gp
 
+from services.notes.types import TabbedNoteEvent
+
 MAX_FRET = 24
-TICKS_PER_BEAT = 960
+TICKS_PER_BEAT = 960  # GP standard resolution
 
 
 def midi_pitch_to_string_fret(pitch: int, tuning_map: dict[int, int]) -> tuple[int, int]:
+    """Find the lowest-fret (string, fret) that plays ``pitch``.
+
+    Falls back to string 1, fret 0 if the pitch is out of range.
+    """
     best: tuple[int, int] | None = None
 
     for string_num in range(6, 0, -1):
@@ -23,11 +40,13 @@ def midi_pitch_to_string_fret(pitch: int, tuning_map: dict[int, int]) -> tuple[i
 
 
 def seconds_to_ticks(seconds: float, bpm: float) -> int:
+    """Convert a time in seconds to GP ticks at the given BPM."""
     beats = seconds * (bpm / 60.0)
     return int(round(beats * TICKS_PER_BEAT))
 
 
 def duration_ticks_to_gp(ticks: int) -> gp.Duration:
+    """Map a duration in ticks to the nearest GP note duration value."""
     choices = [
         (gp.Duration.whole, 3840),
         (gp.Duration.half, 1920),
@@ -49,12 +68,33 @@ def duration_ticks_to_gp(ticks: int) -> gp.Duration:
 
 
 def build_gp5(
-    note_events: list[dict[str, float | int]],
+    note_events: list[TabbedNoteEvent],
     bpm: float = 120.0,
     tuning_map: dict[int, int] | None = None,
     time_signature: tuple[int, int] = (4, 4),
     output_path: str | Path = "output.gp5",
 ) -> Path:
+    """Write note events to a Guitar Pro 5 file.
+
+    Notes are sorted by start time and distributed across measures of the
+    requested time signature. Beats between notes become rests, and each
+    note is written with the string/fret already chosen by the fretboard
+    step (falling back to ``midi_pitch_to_string_fret`` when missing).
+
+    Args:
+        note_events: notes with ``start_s``/``end_s``/``pitch_midi``/
+            ``amplitude`` and optionally ``string_number``/``fret``.
+        bpm: tempo for converting seconds to ticks.
+        tuning_map: string number -> open-string MIDI pitch.
+        time_signature: ``(numerator, denominator)`` of the song.
+        output_path: where to write the ``.gp5`` file.
+
+    Returns:
+        The output path.
+
+    Raises:
+        ValueError: if there are no notes to export.
+    """
     if not note_events:
         raise ValueError("No note events to export")
 
@@ -158,7 +198,7 @@ def build_gp5(
                 )
             )
             voice.beats.append(beat)
-            cursor = note_start + beat.duration.time
+            cursor = note_start + int(beat.duration.time)
 
         if cursor < measure_end:
             voice.beats.append(

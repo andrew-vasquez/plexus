@@ -4,18 +4,18 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-[10px] text-sm font-medium tracking-[-0.01em] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-[10px] text-sm font-medium tracking-[-0.01em] btn-transition active:translate-y-0 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default:
-          "border border-white/90 bg-white text-black shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] hover:-translate-y-[2px] hover:bg-white/92",
+          "border border-white/90 bg-white text-black shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] hover-fine:-translate-y-[2px] hover:bg-white/92",
         outline:
-          "border border-white/12 bg-white/[0.03] text-white hover:-translate-y-[2px] hover:border-white/22 hover:bg-white/[0.06]",
+          "border border-white/12 bg-white/[0.03] text-white hover-fine:-translate-y-[2px] hover:border-white/22 hover:bg-white/[0.06]",
         ghost:
           "border border-transparent bg-transparent text-white/72 hover:text-white hover:bg-white/[0.05]",
         subtle:
-          "border border-white/8 bg-black/30 text-white/84 hover:-translate-y-[2px] hover:border-white/16 hover:bg-black/40",
+          "border border-white/8 bg-black/30 text-white/84 hover-fine:-translate-y-[2px] hover:border-white/16 hover:bg-black/40",
       },
       size: {
         default: "h-11 px-4",

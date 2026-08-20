@@ -1,0 +1,266 @@
+- generic [active] [ref=e1]:
+  - banner:
+    - navigation [ref=e2]:
+      - generic [ref=e4]:
+        - link "Plexus audio to tab" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e12]:
+            - generic [ref=e13]: Plexus
+            - generic [ref=e14]: audio to tab
+        - list [ref=e16]:
+          - listitem [ref=e17]:
+            - link "Workflow" [ref=e18] [cursor=pointer]:
+              - /url: "#workflow"
+          - listitem [ref=e19]:
+            - link "Preview" [ref=e20] [cursor=pointer]:
+              - /url: "#preview"
+          - listitem [ref=e21]:
+            - link "Exports" [ref=e22] [cursor=pointer]:
+              - /url: "#exports"
+          - listitem [ref=e23]:
+            - link "Audience" [ref=e24] [cursor=pointer]:
+              - /url: "#audience"
+        - generic [ref=e25]:
+          - link "Demo" [ref=e26] [cursor=pointer]:
+            - /url: /studio/demo
+          - link "Sign in" [ref=e27] [cursor=pointer]:
+            - /url: /sign-in
+          - link "Get started" [ref=e28] [cursor=pointer]:
+            - /url: /sign-up
+  - main [ref=e29]:
+    - generic [ref=e31]:
+      - generic [ref=e32]:
+        - generic [ref=e33]:
+          - link "Now shaping audio into tab-first workflow" [ref=e35] [cursor=pointer]:
+            - /url: /studio
+          - heading "Turn guitar audio into clean, editable tabs." [level=1] [ref=e42]:
+            - generic [ref=e43]: Turn
+            - generic [ref=e44]: guitar
+            - generic [ref=e45]: audio
+            - generic [ref=e46]: into
+            - generic [ref=e47]: clean,
+            - generic [ref=e48]: editable
+            - generic [ref=e49]: tabs.
+          - paragraph [ref=e51]: Plexus is an AI transcription studio for players who want a fast, precise path from recording to an export-ready guitar part.
+        - generic [ref=e52]:
+          - link "Open Studio" [ref=e55] [cursor=pointer]:
+            - /url: /studio
+          - link "Preview the workspace" [ref=e57] [cursor=pointer]:
+            - /url: /studio/demo
+      - generic [ref=e61]:
+        - generic [ref=e62]:
+          - generic [ref=e63]: Plexus Studio Preview
+          - generic [ref=e65]: 96% structure confidence
+        - generic [ref=e66]:
+          - generic [ref=e68]:
+            - generic [ref=e69]:
+              - paragraph [ref=e70]: Signal intake
+              - paragraph [ref=e71]: Velvet Lights.wav
+            - generic [ref=e72]: 112 BPM / Drop D
+          - generic [ref=e111]:
+            - paragraph [ref=e112]: Structured output
+            - generic [ref=e113]:
+              - generic [ref=e114]:
+                - generic [ref=e115]:
+                  - paragraph [ref=e116]: Intro
+                  - paragraph [ref=e117]: Muted octave lead-in with sparse sustain.
+                - generic [ref=e118]: 1-4
+              - generic [ref=e119]:
+                - generic [ref=e120]:
+                  - paragraph [ref=e121]: Verse
+                  - paragraph [ref=e122]: Palm-muted chug pattern with syncopated turnaround.
+                - generic [ref=e123]: 5-12
+              - generic [ref=e124]:
+                - generic [ref=e125]:
+                  - paragraph [ref=e126]: Chorus
+                  - paragraph [ref=e127]: Open-string lift and wider interval movement.
+                - generic [ref=e128]: 13-20
+          - generic [ref=e129]:
+            - generic [ref=e130]:
+              - generic [ref=e131]:
+                - paragraph [ref=e132]: Playback note
+                - paragraph [ref=e133]: Detected tight palm-muted verse with an open, wider chorus release.
+              - generic [ref=e134]: Review ready
+            - generic [ref=e135]:
+              - generic [ref=e136]:
+                - paragraph [ref=e137]: Intro
+                - paragraph [ref=e138]: 1-4
+              - generic [ref=e139]:
+                - paragraph [ref=e140]: Verse
+                - paragraph [ref=e141]: 5-12
+              - generic [ref=e142]:
+                - paragraph [ref=e143]: Chorus
+                - paragraph [ref=e144]: 13-20
+          - generic [ref=e145]:
+            - paragraph [ref=e146]: Export path
+            - generic [ref=e147]:
+              - generic [ref=e148]:
+                - paragraph [ref=e149]: Guitar Pro draft
+                - paragraph [ref=e150]: Bar markers, tuning, and phrasing ready for a handoff file.
+              - generic [ref=e151]:
+                - paragraph [ref=e152]: Practice PDF
+                - paragraph [ref=e153]: Readable tab format with section dividers and tempo notes.
+              - generic [ref=e154]:
+                - paragraph [ref=e155]: MIDI sketch
+                - paragraph [ref=e156]: Quick arrangement layer for rehearsal or DAW reference.
+      - generic [ref=e157]:
+        - generic [ref=e159]:
+          - paragraph [ref=e160]: Output stack
+          - paragraph [ref=e161]: GP / PDF / MIDI
+          - paragraph [ref=e162]: Deliver the part in the formats players and teachers already expect.
+        - generic [ref=e164]:
+          - paragraph [ref=e165]: Session tone
+          - paragraph [ref=e166]: Black minimal
+          - paragraph [ref=e167]: A premium control-room feel with technical hierarchy and no clutter.
+        - generic [ref=e169]:
+          - paragraph [ref=e170]: Review pass
+          - paragraph [ref=e171]: Browser first
+          - paragraph [ref=e172]: Inspect sections, measures, and exports before a deeper player lands.
+    - generic [ref=e174]:
+      - link "Explore the studio" [ref=e176] [cursor=pointer]:
+        - /url: /studio
+      - generic [ref=e179]:
+        - paragraph [ref=e183]: Audio intake
+        - paragraph [ref=e189]: Tempo + tuning
+        - paragraph [ref=e195]: AI structuring
+        - paragraph [ref=e203]: Export stack
+    - generic [ref=e204]:
+      - generic [ref=e207]:
+        - paragraph [ref=e208]: Workflow
+        - heading "A landing page that shows the product instead of decorating around it." [level=2] [ref=e209]
+        - paragraph [ref=e210]: "The motion stays purposeful: elements settle in as they enter the viewport, cards react on hover, and the hierarchy stays clean enough to feel credible."
+      - generic [ref=e211]:
+        - article [ref=e213]:
+          - generic [ref=e214]: "01"
+          - heading "Drop the take" [level=3] [ref=e218]
+          - paragraph [ref=e219]: Bring in the stem, memo, or full song and let Plexus begin with a clean, confidence-building intake state.
+        - article [ref=e221]:
+          - generic [ref=e222]: "02"
+          - heading "Map the structure" [level=3] [ref=e228]
+          - paragraph [ref=e229]: Tempo, tuning, density, and section logic appear as a guided signal chain instead of a generic progress bar.
+        - article [ref=e231]:
+          - generic [ref=e232]: "03"
+          - heading "Export or refine" [level=3] [ref=e239]
+          - paragraph [ref=e240]: Move into a browser review surface that feels ready for Guitar Pro exports, PDF handoff, or future playback.
+    - generic [ref=e242]:
+      - generic [ref=e244]:
+        - generic [ref=e245]:
+          - generic [ref=e246]:
+            - paragraph [ref=e247]: Demo workspace
+            - heading "Velvet Lights" [level=3] [ref=e248]
+          - link "Open workspace" [ref=e249] [cursor=pointer]:
+            - /url: /studio/demo
+        - generic [ref=e250]:
+          - generic [ref=e251]:
+            - generic [ref=e252]:
+              - generic [ref=e253]: Measure 1
+              - generic [ref=e254]: D5
+            - generic [ref=e255]: e|----------------| B|----------------| G|----------------| D|--0---0---------| A|--0---0---3-2---| D|--0---0---3-2---|
+          - generic [ref=e256]:
+            - generic [ref=e257]:
+              - generic [ref=e258]: Measure 2
+              - generic [ref=e259]: F5
+            - generic [ref=e260]: e|----------------| B|----------------| G|----------------| D|------3---3-----| A|--3-3---3---5-3-| D|--3-3---3---5-3-|
+          - generic [ref=e261]:
+            - generic [ref=e262]:
+              - generic [ref=e263]: Measure 3
+              - generic [ref=e264]: Bb5
+            - generic [ref=e265]: e|----------------| B|----------------| G|----------------| D|--8---8-----8---| A|--8---8-6-8---6-| D|--8---8-6-8---6-|
+          - generic [ref=e266]:
+            - generic [ref=e267]:
+              - generic [ref=e268]: Measure 4
+              - generic [ref=e269]: C5
+            - generic [ref=e270]: e|----------------| B|----------------| G|----------------| D|--10--10----10--| A|--10--10-8--10--| D|--10--10-8--10--|
+        - generic [ref=e271]:
+          - generic [ref=e272]:
+            - paragraph [ref=e273]: Session note
+            - paragraph [ref=e274]: Detected tight palm-muted verse with an open, wider chorus release.
+          - generic [ref=e275]:
+            - paragraph [ref=e276]: Structure pass
+            - generic [ref=e277]:
+              - generic [ref=e278]:
+                - generic [ref=e279]: Intro
+                - generic [ref=e280]: 1-4
+              - generic [ref=e281]:
+                - generic [ref=e282]: Verse
+                - generic [ref=e283]: 5-12
+              - generic [ref=e284]:
+                - generic [ref=e285]: Chorus
+                - generic [ref=e286]: 13-20
+      - generic [ref=e288]:
+        - generic [ref=e289]:
+          - generic [ref=e290]: Precision pass
+          - heading "A workspace that suggests control before the engine does everything." [level=3] [ref=e295]
+          - paragraph [ref=e296]: The MVP UI should already feel like it understands sections, difficulty, and arrangement logic. That trust matters before full transcription depth arrives.
+        - generic [ref=e297]:
+          - generic [ref=e298]: AI direction
+          - heading "Signal-rich states instead of vague loading screens." [level=3] [ref=e303]
+          - paragraph [ref=e304]: "Every transition explains what Plexus is doing: ingesting, mapping, structuring, then handing off into a playable tab review."
+        - generic [ref=e305]:
+          - generic [ref=e306]: Product growth
+          - heading "Designed to grow into a custom player, not get replaced by one." [level=3] [ref=e311]
+          - paragraph [ref=e312]: The visual system leaves room for transport controls, measure sync, and future Guitar Pro support without changing the identity later.
+    - generic [ref=e314]:
+      - generic [ref=e316]:
+        - paragraph [ref=e317]: Export system
+        - heading "Keep the output structured enough to leave the browser cleanly." [level=2] [ref=e318]
+      - generic [ref=e320]:
+        - generic [ref=e321]:
+          - paragraph [ref=e322]: Guitar Pro draft
+          - paragraph [ref=e323]: Bar markers, tuning, and phrasing ready for a handoff file.
+        - generic [ref=e324]:
+          - paragraph [ref=e325]: Practice PDF
+          - paragraph [ref=e326]: Readable tab format with section dividers and tempo notes.
+        - generic [ref=e327]:
+          - paragraph [ref=e328]: MIDI sketch
+          - paragraph [ref=e329]: Quick arrangement layer for rehearsal or DAW reference.
+    - generic [ref=e331]:
+      - generic [ref=e333]:
+        - generic [ref=e334]:
+          - paragraph [ref=e335]: Audience
+          - heading "Built for players who want less friction between hearing and playing." [level=2] [ref=e336]
+        - paragraph [ref=e337]: Plexus should feel credible to experienced guitarists, clear to teachers, and inviting to newer players. The interface stays technical without becoming cold, and the workflow stays fast without looking disposable.
+      - generic [ref=e339]:
+        - article [ref=e340]:
+          - paragraph [ref=e341]: Serious guitarists
+          - paragraph [ref=e342]: Bring recordings back into a clean tab workflow when your ear is faster than your patience.
+        - article [ref=e343]:
+          - paragraph [ref=e344]: Teachers
+          - paragraph [ref=e345]: Convert lesson fragments and practice references into handoff-ready tabs without losing structure.
+        - article [ref=e346]:
+          - paragraph [ref=e347]: Newer players
+          - paragraph [ref=e348]: Use a clearer interface for seeing where the part lives, how sections repeat, and what to export for practice.
+  - contentinfo [ref=e349]:
+    - generic [ref=e350]:
+      - generic [ref=e351]:
+        - link "Plexus audio to tab" [ref=e352] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e357]:
+            - generic [ref=e358]: Plexus
+            - generic [ref=e359]: audio to tab
+        - paragraph [ref=e360]: Plexus is an AI powered transcription studio for turning guitar audio into clean review-ready tabs and export paths.
+      - generic [ref=e361]:
+        - generic [ref=e362]:
+          - paragraph [ref=e363]: Navigate
+          - generic [ref=e364]:
+            - link "Workflow" [ref=e365] [cursor=pointer]:
+              - /url: "#workflow"
+            - link "Preview" [ref=e366] [cursor=pointer]:
+              - /url: "#preview"
+            - link "Exports" [ref=e367] [cursor=pointer]:
+              - /url: "#exports"
+            - link "Audience" [ref=e368] [cursor=pointer]:
+              - /url: "#audience"
+        - generic [ref=e369]:
+          - paragraph [ref=e370]: Product
+          - generic [ref=e371]:
+            - link "Open Studio" [ref=e372] [cursor=pointer]:
+              - /url: /studio
+            - link "Demo Workspace" [ref=e373] [cursor=pointer]:
+              - /url: /studio/demo
+        - generic [ref=e374]:
+          - paragraph [ref=e375]: Output
+          - generic [ref=e376]:
+            - paragraph [ref=e377]: Guitar Pro draft
+            - paragraph [ref=e378]: Practice PDF
+            - paragraph [ref=e379]: MIDI sketch
