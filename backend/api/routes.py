@@ -14,33 +14,45 @@ from api.schemas import (
     TranscriptionJobStatusResponse,
     TranscriptionResponse,
 )
-from services.note_processing import TranscriptionOptions, parse_time_signature
+from services.notes.options import TranscriptionOptions, parse_time_signature
 from services.jobs import job_store
-from services.pipeline import run_transcription_pipeline_payload
+from services.pipeline import (
+    ArtifactPayload,
+    TranscriptionArtifacts,
+    TranscriptionResult,
+    run_transcription_pipeline_payload,
+)
 from services.storage import artifact_store
 
 router = APIRouter()
 
 
-def _map_transcription_response(payload: dict[str, object]) -> TranscriptionResponse:
-    artifacts = payload["artifacts"]
-    midi_artifact = ArtifactResponse(**artifacts["midi"]) if artifacts["midi"] else None
+def _map_transcription_response(
+    payload: TranscriptionResult,
+) -> TranscriptionResponse:
+    artifacts: TranscriptionArtifacts = payload["artifacts"]
+    midi_artifact = (
+        ArtifactResponse(**artifacts["midi"]) if artifacts["midi"] else None
+    )
     gp5_artifact = ArtifactResponse(**artifacts["gp5"]) if artifacts["gp5"] else None
-    stem_artifact = ArtifactResponse(**artifacts["stem"]) if artifacts["stem"] else None
+    stem_artifact = (
+        ArtifactResponse(**artifacts["stem"]) if artifacts["stem"] else None
+    )
 
+    note_events = payload["note_events"]
     return TranscriptionResponse(
-        job_id=str(payload["job_id"]),
-        source_filename=str(payload["source_filename"]),
-        content_type=str(payload["content_type"]),
-        bpm=float(payload["bpm"]),
-        tuning=str(payload["tuning"]),
-        capo=int(payload["capo"]),
-        mode=str(payload["mode"]),
-        stem_mode=str(payload.get("stem_mode", "none")),
-        time_signature=str(payload["time_signature"]),
-        note_count=int(payload["note_count"]),
-        note_preview_count=len(payload["note_events"]),
-        note_events=[NoteEventResponse(**note) for note in payload["note_events"]],
+        job_id=payload["job_id"],
+        source_filename=payload["source_filename"],
+        content_type=payload["content_type"],
+        bpm=payload["bpm"],
+        tuning=payload["tuning"],
+        capo=payload["capo"],
+        mode=payload["mode"],
+        stem_mode=payload.get("stem_mode", "none"),
+        time_signature=payload["time_signature"],
+        note_count=payload["note_count"],
+        note_preview_count=len(note_events),
+        note_events=[NoteEventResponse(**note) for note in note_events],
         artifacts=TranscriptionArtifactsResponse(
             midi=midi_artifact,
             gp5=gp5_artifact,
@@ -73,7 +85,8 @@ def _run_job(
                 status=status,
                 progress=progress,
                 message=message,
-            ),
+            )
+            and None,
         )
         job_store.update(
             job_id,

@@ -1,4 +1,6 @@
 import { Link, useLocation } from "@tanstack/react-router";
+import { useInView } from "framer-motion";
+import { useRef } from "react";
 import { demoSession, heroStats } from "@/lib/demo-data";
 import { AnimatedGroup } from "@/components/ui/animated-group";
 import { Button } from "@/components/ui/button";
@@ -8,6 +10,8 @@ import { ArrowRight, transitionVariants } from "@/components/landing/constants";
 export function HeroIntro() {
   const { pathname } = useLocation();
   const routeAnimationKey = `hero-${pathname}`;
+  const previewRef = useRef<HTMLDivElement | null>(null);
+  const previewInView = useInView(previewRef, { amount: 0.05 });
 
   return (
     <section className="relative">
@@ -28,7 +32,7 @@ export function HeroIntro() {
           >
               <Link
                 to="/studio"
-                className="group mx-auto flex w-fit items-center gap-4 rounded-[12px] border border-white/12 bg-white/[0.03] px-4 py-2 text-sm text-white/78 shadow-[0_20px_80px_-40px_rgba(0,0,0,0.9)] transition-all duration-300 hover:border-white/22 hover:bg-white/[0.06] hover:text-white"
+                className="group mx-auto flex w-fit items-center gap-4 rounded-[12px] border border-white/12 bg-white/[0.03] px-4 py-2 text-sm text-white/78 shadow-[0_20px_80px_-40px_rgba(0,0,0,0.9)] transition-[border-color,background-color,color] duration-300 hover:border-white/22 hover:bg-white/[0.06] hover:text-white"
               >
               <span>Now shaping audio into tab-first workflow</span>
               <span className="h-4 w-px bg-white/12" />
@@ -102,7 +106,10 @@ export function HeroIntro() {
           animateOnMount
           className="mt-16 md:mt-20"
         >
-          <div className="relative mx-auto max-w-6xl overflow-hidden rounded-[28px] border border-white/10 bg-[#0a0a0b] p-2 shadow-[0_30px_120px_-50px_rgba(0,0,0,0.95)]">
+          <div
+            ref={previewRef}
+            className="relative mx-auto max-w-6xl overflow-hidden rounded-[28px] border border-white/10 bg-[#0a0a0b] p-2 shadow-[0_30px_120px_-50px_rgba(0,0,0,0.95)]"
+          >
             <div className="relative rounded-[22px] border border-white/8 bg-[#121214] p-4 md:p-6">
               <div className="flex items-center justify-between border-b border-white/8 pb-4 text-xs uppercase tracking-[0.22em] text-white/40">
                 <div className="flex items-center gap-3">
@@ -125,7 +132,11 @@ export function HeroIntro() {
                   </div>
 
                   <div className="signal-intake-frame mt-6 rounded-[16px] border border-white/8 bg-black/60 p-4">
-                    <div className="waveform-bars signal-intake-bars h-36" aria-hidden="true">
+                    <div
+                      className="waveform-bars signal-intake-bars h-36"
+                      aria-hidden="true"
+                      style={{ animationPlayState: previewInView ? "running" : "paused" }}
+                    >
                       {Array.from({ length: 36 }).map((_, index) => (
                         <span
                           key={index}
@@ -208,13 +219,12 @@ export function HeroIntro() {
 
         <AnimatedGroup
           key={`${routeAnimationKey}-stats`}
-          animateOnMount
           className="mt-8 grid gap-4 md:grid-cols-3"
         >
           {heroStats.map((stat) => (
             <div
               key={stat.label}
-              className="rounded-[18px] border border-white/8 bg-white/[0.025] p-5 transition-all duration-300 hover:-translate-y-1 hover:border-white/16 hover:bg-white/[0.04]"
+              className="rounded-[18px] border border-white/8 bg-white/[0.025] p-5 transition-[translate,border-color,background-color,box-shadow] duration-300 hover-fine:-translate-y-1 hover:border-white/16 hover:bg-white/[0.04]"
             >
               <p className="text-[11px] uppercase tracking-[0.2em] text-white/45">
                 {stat.label}

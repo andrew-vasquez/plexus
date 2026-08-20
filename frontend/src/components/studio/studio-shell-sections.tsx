@@ -8,6 +8,7 @@ import {
   Upload,
   Waves,
 } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { type UploadPhase } from "@/lib/demo-data";
 import {
@@ -77,6 +78,25 @@ type StudioRightRailProps = {
   apiBaseUrl: string;
 };
 
+function StatusBadge({ status }: { status: string }) {
+  return (
+    <span className="type-label relative inline-flex shrink-0 items-center overflow-hidden rounded-[12px] border border-white/8 bg-white/[0.03] px-3 py-2 text-white/42">
+      <AnimatePresence initial={false} mode="popLayout">
+        <motion.span
+          key={status}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.15, ease: "easeOut" }}
+          className="inline-block"
+        >
+          {status}
+        </motion.span>
+      </AnimatePresence>
+    </span>
+  );
+}
+
 function SignalCard({
   label,
   active,
@@ -86,6 +106,8 @@ function SignalCard({
   active?: boolean;
   complete?: boolean;
 }) {
+  const status = complete ? "Done" : active ? "Live" : "Standby";
+
   return (
     <div
       className={`${studioInsetCardClass} flex flex-col items-start gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 ${
@@ -96,13 +118,9 @@ function SignalCard({
         <p className="text-lg leading-tight tracking-[-0.03em] text-white">
           {label}
         </p>
-        <p className="mt-1 text-sm text-white/44">
-          {complete ? "Complete" : active ? "Live" : "Standby"}
-        </p>
+        <p className="mt-1 text-sm text-white/44">{status}</p>
       </div>
-      <span className="type-label shrink-0 rounded-[12px] border border-white/8 bg-white/[0.03] px-3 py-2 text-white/42">
-        {complete ? "Done" : active ? "Live" : "Standby"}
-      </span>
+      <StatusBadge status={status} />
     </div>
   );
 }
@@ -119,31 +137,63 @@ function UploadStatusCard({
   progressState: StudioUploadPanelProps["progressState"];
 }) {
   const isActive = phase === "uploading" || phase === "processing";
+  const iconKey = phase === "ready" ? "ready" : isActive ? "active" : phase === "error" ? "error" : "idle";
+  const title =
+    phase === "idle"
+      ? "Status signal"
+      : phase === "ready"
+        ? "Ready to review"
+        : phase === "error"
+          ? "Upload issue"
+          : "Signal in motion";
 
   return (
-    <div className={`${studioInsetCardClass} p-5`}>
+    <div className={`${studioInsetCardClass} relative overflow-hidden p-5`}>
+      {phase === "ready" ? (
+        <motion.div
+          key="ready-glow"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 1, 0] }}
+          transition={{ duration: 1, times: [0, 0.35, 1], ease: "easeOut" }}
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 rounded-[18px] shadow-[0_0_80px_-24px_rgba(122,215,255,0.5)] ring-1 ring-[var(--color-accent)]/25"
+        />
+      ) : null}
       <div className="flex items-start gap-4">
-        <div className="mt-0.5 rounded-[14px] border border-white/8 bg-white/[0.03] p-3">
-          {phase === "ready" ? (
-            <CheckCircle2 className="size-5 text-[var(--color-accent)]" />
-          ) : isActive ? (
-            <LoaderCircle className="size-5 animate-spin text-[var(--color-accent)]" />
-          ) : phase === "error" ? (
-            <Clock3 className="size-5 text-white/64" />
-          ) : (
-            <Waves className="size-5 text-white/82" />
-          )}
+        <div className="relative mt-0.5 rounded-[14px] border border-white/8 bg-white/[0.03] p-3">
+          <AnimatePresence initial={false} mode="popLayout">
+            <motion.div
+              key={iconKey}
+              initial={{ opacity: 0, scale: 0.85 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.85 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+            >
+              {phase === "ready" ? (
+                <CheckCircle2 className="size-5 text-[var(--color-accent)]" />
+              ) : isActive ? (
+                <LoaderCircle className="size-5 animate-spin text-[var(--color-accent)]" />
+              ) : phase === "error" ? (
+                <Clock3 className="size-5 text-white/64" />
+              ) : (
+                <Waves className="size-5 text-white/82" />
+              )}
+            </motion.div>
+          </AnimatePresence>
         </div>
         <div className="min-w-0">
-          <p className="text-xl tracking-[-0.03em] text-white">
-            {phase === "idle"
-              ? "Status signal"
-              : phase === "ready"
-                ? "Ready to review"
-                : phase === "error"
-                  ? "Upload issue"
-                  : "Signal in motion"}
-          </p>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.p
+              key={title}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.16, ease: "easeOut" }}
+              className="text-xl tracking-[-0.03em] text-white"
+            >
+              {title}
+            </motion.p>
+          </AnimatePresence>
           <p className="mt-2 max-w-xl text-base leading-relaxed text-white/60">
             {errorMessage || statusMessage}
           </p>
@@ -155,8 +205,8 @@ function UploadStatusCard({
               </div>
               <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/8">
                 <div
-                  className="h-full rounded-full bg-[var(--color-accent)] transition-[width] duration-500 ease-out"
-                  style={{ width: `${progressState.progress}%` }}
+                  className="h-full origin-left rounded-full bg-[var(--color-accent)] transition-transform duration-500 ease-out"
+                  style={{ transform: `scaleX(${progressState.progress / 100})` }}
                 />
               </div>
             </div>
@@ -441,6 +491,33 @@ export function StudioRightRail({
   apiBaseUrl,
 }: StudioRightRailProps) {
   const currentTitle = lastUploadedFile ?? "No upload yet";
+  const resultButtons = backendResult
+    ? (
+        [
+          backendResult.artifacts.midi
+            ? {
+                key: "midi",
+                label: "Download MIDI",
+                href: backendResult.artifacts.midi.download_url,
+              }
+            : null,
+          backendResult.artifacts.gp5
+            ? {
+                key: "gp5",
+                label: "Download GP5",
+                href: backendResult.artifacts.gp5.download_url,
+              }
+            : null,
+          backendResult.artifacts.stem
+            ? {
+                key: "stem",
+                label: `Download ${backendResult.stem_mode === "guitar_only" ? "guitar-only" : "no-guitar"} stem`,
+                href: backendResult.artifacts.stem.download_url,
+              }
+            : null,
+        ].filter((item): item is { key: string; label: string; href: string } => item !== null)
+      )
+    : [];
 
   return (
     <aside className={`${studioRailClass} h-full min-w-0 p-5`}>
@@ -494,9 +571,15 @@ export function StudioRightRail({
       </div>
 
       <div className={`${studioInsetCardClass} mt-6 p-5`}>
-        <div className="flex items-start justify-between gap-4">
-          <div className="min-w-0">
-            <p className="type-label text-white/42">Latest backend result</p>
+        <p className="type-label text-white/42">Latest backend result</p>
+        <AnimatePresence initial={false} mode="wait">
+          <motion.div
+            key={backendResult ? "result" : "empty"}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+          >
             <p className="mt-4 text-base leading-relaxed text-white/60">
               {backendResult
                 ? `${backendResult.note_count} playable notes in ${backendResult.mode} mode at ${Math.round(
@@ -508,66 +591,47 @@ export function StudioRightRail({
                   }`
                 : "Upload a file to verify the real backend response without leaving the demo shell."}
             </p>
-          </div>
-        </div>
 
-        {backendResult ? (
-          <div className="mt-5 space-y-3">
-            {backendResult.artifacts.midi ? (
-              <Button
-                asChild
-                variant="subtle"
-                size="lg"
-                className="w-full justify-between hover:translate-y-0"
+            {backendResult ? (
+              <motion.div
+                className="mt-5 space-y-3"
+                initial="hidden"
+                animate="visible"
+                variants={{ visible: { transition: { staggerChildren: 0.04 } } }}
               >
-                <a
-                  href={`${apiBaseUrl}${backendResult.artifacts.midi.download_url}`}
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  Download MIDI
-                  <ArrowRight className="ml-2 size-4" />
-                </a>
-              </Button>
+                {resultButtons.map((item) => (
+                  <motion.div
+                    key={item.key}
+                    variants={{
+                      hidden: { opacity: 0, y: 8 },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        transition: { duration: 0.22, ease: "easeOut" },
+                      },
+                    }}
+                  >
+                    <Button
+                      asChild
+                      variant="subtle"
+                      size="lg"
+                      className="w-full justify-between hover:translate-y-0"
+                    >
+                      <a
+                        href={`${apiBaseUrl}${item.href}`}
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        {item.label}
+                        <ArrowRight className="ml-2 size-4" />
+                      </a>
+                    </Button>
+                  </motion.div>
+                ))}
+              </motion.div>
             ) : null}
-
-            {backendResult.artifacts.gp5 ? (
-              <Button
-                asChild
-                variant="subtle"
-                size="lg"
-                className="w-full justify-between hover:translate-y-0"
-              >
-                <a
-                  href={`${apiBaseUrl}${backendResult.artifacts.gp5.download_url}`}
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  Download GP5
-                  <ArrowRight className="ml-2 size-4" />
-                </a>
-              </Button>
-            ) : null}
-
-            {backendResult.artifacts.stem ? (
-              <Button
-                asChild
-                variant="subtle"
-                size="lg"
-                className="w-full justify-between hover:translate-y-0"
-              >
-                <a
-                  href={`${apiBaseUrl}${backendResult.artifacts.stem.download_url}`}
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  Download {backendResult.stem_mode === "guitar_only" ? "guitar-only" : "no-guitar"} stem
-                  <ArrowRight className="ml-2 size-4" />
-                </a>
-              </Button>
-            ) : null}
-          </div>
-        ) : null}
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       <div className={`${studioInsetCardClass} mt-6 p-5`}>
@@ -580,27 +644,47 @@ export function StudioRightRail({
           </div>
         </div>
 
-        {recentUploads.length > 0 ? (
-          <div className="mt-5 space-y-3">
-            {recentUploads.slice(0, 3).map((upload, index) => (
-              <div
-                key={upload}
-                className="rounded-[16px] border border-white/8 bg-white/[0.02] px-4 py-4 text-sm text-white/76 transition-[border-color,background-color,box-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-white/14 hover:bg-white/[0.03]"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <span className="min-w-0 break-words leading-relaxed">{upload}</span>
-                  <span className="type-label shrink-0 text-white/32">
-                    {index === 0 ? "Latest" : "Earlier"}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="mt-5 text-sm leading-relaxed text-white/42">
-            Nothing has been uploaded in this session yet.
-          </p>
-        )}
+        <AnimatePresence initial={false} mode="wait">
+          {recentUploads.length > 0 ? (
+            <motion.div
+              key="list"
+              className="mt-5 space-y-3"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18, ease: "easeOut" }}
+            >
+              {recentUploads.slice(0, 3).map((upload, index) => (
+                <motion.div
+                  key={upload}
+                  layout
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  className="rounded-[16px] border border-white/8 bg-white/[0.02] px-4 py-4 text-sm text-white/76 transition-[border-color,background-color,box-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-white/14 hover:bg-white/[0.03]"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="min-w-0 break-words leading-relaxed">{upload}</span>
+                    <span className="type-label shrink-0 text-white/32">
+                      {index === 0 ? "Latest" : "Earlier"}
+                    </span>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : (
+            <motion.p
+              key="empty"
+              className="mt-5 text-sm leading-relaxed text-white/42"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18, ease: "easeOut" }}
+            >
+              Nothing has been uploaded in this session yet.
+            </motion.p>
+          )}
+        </AnimatePresence>
       </div>
     </aside>
   );

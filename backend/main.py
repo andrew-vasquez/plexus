@@ -1,3 +1,11 @@
+"""Plexus backend entry point.
+
+Creates the FastAPI app, wires up CORS and the API routes, and serves
+them under the ``/api/v1`` prefix. Run locally with:
+
+    uvicorn main:app --reload
+"""
+
 from __future__ import annotations
 
 from fastapi import FastAPI
@@ -23,6 +31,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.allowed_origins,
+    allow_origin_regex=settings.allowed_origin_regex,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

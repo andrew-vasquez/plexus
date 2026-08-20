@@ -6,7 +6,8 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 
 from core.config import settings
-from services.note_processing import TranscriptionOptions
+from services.notes.options import TranscriptionOptions
+from services.notes.types import NoteEvent
 
 
 @dataclass(frozen=True)
@@ -23,27 +24,27 @@ class RefinementProvider(ABC):
     @abstractmethod
     def refine(
         self,
-        note_events: list[dict[str, float | int]],
+        note_events: list[NoteEvent],
         context: RefinementContext,
-    ) -> list[dict[str, float | int]]:
+    ) -> list[NoteEvent]:
         raise NotImplementedError
 
 
 class NoopRefinementProvider(RefinementProvider):
     def refine(
         self,
-        note_events: list[dict[str, float | int]],
+        note_events: list[NoteEvent],
         context: RefinementContext,
-    ) -> list[dict[str, float | int]]:
+    ) -> list[NoteEvent]:
         return note_events
 
 
 class DumpRefinementProvider(RefinementProvider):
     def refine(
         self,
-        note_events: list[dict[str, float | int]],
+        note_events: list[NoteEvent],
         context: RefinementContext,
-    ) -> list[dict[str, float | int]]:
+    ) -> list[NoteEvent]:
         dump_payload = {
             "job_id": context.job_id,
             "source_filename": context.source_filename,

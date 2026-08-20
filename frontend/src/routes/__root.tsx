@@ -7,6 +7,7 @@ import {
   Scripts,
   createRootRoute,
 } from "@tanstack/react-router";
+import { MotionConfig } from "framer-motion";
 import type { ReactNode } from "react";
 import { DefaultCatchBoundary } from "@/components/DefaultCatchBoundary";
 import { getAuthState } from "@/lib/auth";
@@ -58,7 +59,9 @@ function RootComponent() {
       signUpUrl="/sign-up"
     >
       <RootDocument>
-        <Outlet />
+        <MotionConfig reducedMotion="user">
+          <Outlet />
+        </MotionConfig>
       </RootDocument>
     </ClerkProvider>
   );

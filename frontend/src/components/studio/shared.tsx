@@ -64,6 +64,7 @@ export function StudioTopBar({
     <header className="mx-auto mb-8 flex w-full max-w-7xl flex-col gap-5 lg:px-10 lg:flex-row lg:items-center lg:justify-between">
       <AnimatedGroup
         animateOnMount
+        preset="fade"
         className="flex flex-col gap-4 sm:flex-row sm:items-center"
       >
         <PlexusLogo />
@@ -89,6 +90,7 @@ export function StudioTopBar({
 
       <AnimatedGroup
         animateOnMount
+        preset="fade"
         className="flex flex-col gap-3 sm:flex-row sm:items-center"
       >
         {secondaryAction}
@@ -106,7 +108,11 @@ export function StudioSurface({
   children,
 }: StudioSurfaceProps) {
   return (
-    <AnimatedGroup animateOnMount className={`${studioPanelClass} p-6 sm:p-8`}>
+    <AnimatedGroup
+      animateOnMount
+      preset="fade"
+      className={`${studioPanelClass} p-6 sm:p-8`}
+    >
       <div
         className={`flex min-w-0 flex-col ${stats.length > 0 ? "gap-8 border-b border-white/8 pb-8" : "gap-6 pb-2"}`}
       >

@@ -12,6 +12,7 @@ type AnimatedGroupProps = {
   };
   once?: boolean;
   animateOnMount?: boolean;
+  preset?: "reveal" | "fade";
 };
 
 const defaultContainerVariants: Variants = {
@@ -38,15 +39,39 @@ const defaultItemVariants: Variants = {
   },
 };
 
+const fadeContainerVariants: Variants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.04,
+    },
+  },
+};
+
+const fadeItemVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      duration: 0.25,
+      ease: [0.23, 1, 0.32, 1],
+    },
+  },
+};
+
 export function AnimatedGroup({
   children,
   className,
   variants,
   once = true,
   animateOnMount = false,
+  preset = "reveal",
 }: AnimatedGroupProps) {
-  const containerVariants = variants?.container ?? defaultContainerVariants;
-  const itemVariants = variants?.item ?? defaultItemVariants;
+  const containerVariants =
+    variants?.container ??
+    (preset === "fade" ? fadeContainerVariants : defaultContainerVariants);
+  const itemVariants =
+    variants?.item ?? (preset === "fade" ? fadeItemVariants : defaultItemVariants);
 
   return (
     <motion.div

@@ -30,7 +30,7 @@ function WorkflowSection() {
         {workflowSteps.map((step, index) => (
           <article
             key={step.title}
-            className="group rounded-[22px] border border-white/8 bg-white/[0.025] p-6 transition-all duration-300 hover:-translate-y-1.5 hover:border-white/16 hover:bg-white/[0.05]"
+            className="group rounded-[22px] border border-white/8 bg-white/[0.025] p-6 transition-[translate,border-color,background-color,box-shadow] duration-300 hover-fine:-translate-y-1.5 hover:border-white/16 hover:bg-white/[0.05]"
           >
             <div className="flex items-center justify-between">
               <span className="text-[11px] uppercase tracking-[0.2em] text-white/42">
@@ -70,7 +70,7 @@ function PreviewSection() {
             {demoSession.measures.slice(0, 4).map((measure) => (
               <div
                 key={measure.number}
-                className="rounded-[16px] border border-white/8 bg-black/35 p-4 transition-all duration-300 hover:border-white/15 hover:bg-black/50"
+                className="rounded-[16px] border border-white/8 bg-black/35 p-4 transition-[border-color,background-color] duration-300 hover:border-white/15 hover:bg-black/50"
               >
                 <div className="flex items-center justify-between text-xs uppercase tracking-[0.18em] text-white/42">
                   <span>Measure {measure.number}</span>
@@ -115,7 +115,7 @@ function PreviewSection() {
           {featureCards.map((feature) => (
             <div
               key={feature.title}
-              className="group rounded-[22px] border border-white/8 bg-white/[0.025] p-6 transition-all duration-300 hover:-translate-y-1 hover:border-white/16 hover:bg-white/[0.05]"
+              className="group rounded-[22px] border border-white/8 bg-white/[0.025] p-6 transition-[translate,border-color,background-color,box-shadow] duration-300 hover-fine:-translate-y-1 hover:border-white/16 hover:bg-white/[0.05]"
             >
               <div className="flex items-center gap-3 text-white/44">
                 <feature.icon className="size-4 text-white/70" />
@@ -156,8 +156,8 @@ function ExportsSection() {
           {demoSession.exports.map((item) => (
             <div
               key={item.label}
-              className="rounded-[18px] border border-white/8 bg-black/35 p-5 transition-all duration-300
-              hover:-translate-y-1 hover:border-white/16 hover:bg-black/50"
+              className="rounded-[18px] border border-white/8 bg-black/35 p-5 transition-[translate,border-color,background-color,box-shadow] duration-300
+              hover-fine:-translate-y-1 hover:border-white/16 hover:bg-black/50"
             >
               <p className="text-lg tracking-[-0.03em] text-white">
                 {item.label}
@@ -197,7 +197,7 @@ function AudienceSection() {
           {audienceCards.map((audience) => (
             <article
               key={audience.title}
-              className="group rounded-[18px] border border-white/8 bg-black/35 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-white/16 hover:bg-black/50"
+              className="group rounded-[18px] border border-white/8 bg-black/35 p-5 transition-[translate,border-color,background-color,box-shadow] duration-300 hover-fine:-translate-y-1 hover:border-white/16 hover:bg-black/50"
             >
               <p className="text-lg tracking-[-0.03em] text-white">{audience.title}</p>
               <p className="mt-3 text-sm leading-7 text-white/50">
